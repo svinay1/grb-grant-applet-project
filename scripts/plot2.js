@@ -22,6 +22,12 @@ function plot2() {
     // Read the data
     d3.csv("https://raw.githubusercontent.com/lorenzoluzi/public_data/master/simple_data.csv", 
         function(data) {
+            data.forEach(function(d) {
+                const x_num = +d.x;
+                let rand_
+                d.y = (x_num - 3.78) ** 2 + Math.floor(Math.random() * (5)) + 1; 
+            });
+
             // Get c2, c1, and b from variables drawn from text fields
             let c2 = parseFloat(document.getElementById('c2Box').value) || 0;
             let c1 = parseFloat(document.getElementById('c1Box').value) || 0;
@@ -79,7 +85,7 @@ function plot2() {
             addLegendEntry(svg, "rect", legendX, center, color_residuals, "Residuals", font, icon_width, circle_radius);
 
             // Estimate entry
-            addLegendEntry(svg, "rect", legendX, center + spacing, color_estimate, "Estimate c2x^2 + c1x +b", font, icon_width, circle_radius);
+            addLegendEntry(svg, "rect", legendX, center + spacing, color_estimate, "Estimate c\u2082x\u00B2 + c\u2081x + b", font, icon_width, circle_radius);
 
             // Find the solution to the regression
             function solveRegression() {

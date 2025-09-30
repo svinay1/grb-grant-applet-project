@@ -19,7 +19,7 @@ function getMinMax(data, predictY) {
     // Return the min and max given the predictY regression function
     let xmin = data[0].x;
     let xmax = data[0].x;
-    let ymin = data[0].y;
+    let ymin = data[0].y ** 2;
     let ymax = 15.1; // Default value
     for (var i = 0; i < data.length; i++) {
         // Set variables
