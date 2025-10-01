@@ -92,8 +92,8 @@ function plot1() {
             const coefs = math.multiply(math.inv(X_tX), math.multiply(X_t, y));
 
             // Extract coefficients and assign them to the box and sliders
-            const b = coefs[0];
-            const m = coefs[1];
+            const b = +coefs[0].toFixed(4);
+            const m = +coefs[1].toFixed(4);
 
             document.getElementById('bBox').value = b;
             document.getElementById('bSlider').value = b;

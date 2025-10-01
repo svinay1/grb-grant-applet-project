@@ -25,7 +25,7 @@
             
             /* The buttons */
             .button {
-              width: 5%;
+              width: 7%;
             }
             
             /* Mouse-over effects */
@@ -79,11 +79,11 @@
         <div id="myplot"></div>
         <div>
         <form>
-            <td>$c2=$</td>
+            <td>$m=$</td>
             <td><input id="mSlider", type="range", name="mSlider", size="7", class="slider", 
-                    value="0.5", step="0.1", min="-5",  max="5", oninput="this.form.c2Box.value=this.value; plot1()"></td>
+                    value="0.5", step="0.1", min="-5",  max="5", oninput="this.form.mBox.value=this.value; plot1()"></td>
             <td><input id="mBox", type="number", name="mBox", size="20", class="button",
-                    value="0.5", step="0.1", min="-5",  max="5", oninput="this.form.c2Slider.value=this.value; plot1()" /></td>
+                    value="0.5", step="0.1", min="-5",  max="5", oninput="this.form.mSlider.value=this.value; plot1()" /></td>
         </div>
         <div>
             <td>$b=$</td>

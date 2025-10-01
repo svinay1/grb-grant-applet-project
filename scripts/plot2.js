@@ -19,100 +19,101 @@ function plot2() {
     // Append the svg object to the body of the page
     var svg = appendSvg("#myplot", width, height, margin);
             
-    // Read the data
-    d3.csv("https://raw.githubusercontent.com/lorenzoluzi/public_data/master/simple_data.csv", 
-        function(data) {
-            data.forEach(function(d) {
-                const x_num = +d.x;
-                let rand_
-                d.y = (x_num - 3.78) ** 2 + Math.floor(Math.random() * (5)) + 1; 
-            });
-
-            // Get c2, c1, and b from variables drawn from text fields
-            let c2 = parseFloat(document.getElementById('c2Box').value) || 0;
-            let c1 = parseFloat(document.getElementById('c1Box').value) || 0;
-            let b = parseFloat(document.getElementById('bBox').value) || 0;
-
-
-            // Set the function.
-            const predictPolynomial = x => c2 * (x ** 2) + c1 * x + b;
-
-            // Min and max x and y
-            let { xmin, xmax, ymin, ymax } = getMinMax(data, predictPolynomial);
-
-            // Add x axis
-            let x = addXAxis(svg, xmin, xmax, width, height);
-
-            // Add y axis
-            let y = addYAxis(svg, ymin, ymax, width, height);
-
-            // Grid lines
-            // Line strokes: https://observablehq.com/@onoratod/animate-a-path-in-d3
-            drawGridlines(7, 9, width, height, color_grid);
-
-            // Draw Residuals
-            drawResiduals(svg, data, color_residuals, x, y, predictPolynomial);
-
-            // Draw line for estimate
-            drawEstimateLine(svg, x, y, xmin, xmax, predictPolynomial, color_estimate);
-
-            // Add dots
-            addDots(svg, data, x, y, color_data);
-            
-            // Calculate error
-            let error = calcError(data, predictPolynomial);
-
-            // Title
-            addTitle(svg, font, width, margin, `Simple Polynomial Regression: c2 = ${c2.toFixed(2)}, c1 = ${c1.toFixed(2)}, b = ${b.toFixed(2)}, total error = ${error.toFixed(2)}`);
-
-            // y label
-            addYLabel(svg, font, height, margin, "Y values");
-
-            // x label
-            addXLabel(svg, font, width, height, margin, "X values");
-
-            // Legend
-            let center = height/2;
-            let spacing = 20;
-            let circle_radius = 6;
-            let icon_width = 24;
-            let legendX = width + 20;
-
-            // Data entry
-            addLegendEntry(svg, "circle", legendX, center - spacing, color_data, "Data", font, icon_width, circle_radius);
-
-            // Residuals entry
-            addLegendEntry(svg, "rect", legendX, center, color_residuals, "Residuals", font, icon_width, circle_radius);
-
-            // Estimate entry
-            addLegendEntry(svg, "rect", legendX, center + spacing, color_estimate, "Estimate c\u2082x\u00B2 + c\u2081x + b", font, icon_width, circle_radius);
-
-            // Find the solution to the regression
-            function solveRegression() {
-                // Extract X and y matrices
-                const X = data.map(d => [1, d.x, d.x ** 2]);
-                const y = data.map(d => d.y);
-
-                // Matrix multiplication
-                const X_t = math.transpose(X);
-                const X_tX = math.multiply(X_t, X);
-                const coefs = math.multiply(math.inv(X_tX), math.multiply(X_t, y));
-
-                // Extract coefficients and assign them to the box and sliders
-                const b = coefs[0];
-                const c1 = coefs[1];
-                const c2 = coefs[2];
-
-                document.getElementById('bBox').value = b;
-                document.getElementById('bSlider').value = b;
-                document.getElementById('c1Box').value = c1;
-                document.getElementById('c1Slider').value = c1;
-                document.getElementById('c2Box').value = c2;
-                document.getElementById('c2Slider').value = c2;
-            }
-
-            window.solveRegression = solveRegression;
+    // Get the data
+    function generateUniformData(xmax, xmin, totalPoints) {
+        const data = [];
+        for (let i = 0; i < totalPoints; i++) {
+            const x = Math.random() * (xmax - xmin) + xmin;
+            const y = (x - 2.08) ** 2 - Math.random();
+            data.push({ x: x, y: y });
         }
+        return data;
+    }
 
-    )
+    const data = generateUniformData(0, 6, 100);
+
+    // Get c2, c1, and b from variables drawn from text fields
+    let c2 = parseFloat(document.getElementById('c2Box').value) || 0;
+    let c1 = parseFloat(document.getElementById('c1Box').value) || 0;
+    let b = parseFloat(document.getElementById('bBox').value) || 0;
+
+
+    // Set the function.
+    const predictPolynomial = x => c2 * (x ** 2) + c1 * x + b;
+
+    // Min and max x and y
+    let { xmin, xmax, ymin, ymax } = getMinMax(data, predictPolynomial);
+
+    // Add x axis
+    let x = addXAxis(svg, xmin, xmax, width, height);
+
+    // Add y axis
+    let y = addYAxis(svg, ymin, ymax, width, height);
+
+    // Grid lines
+    // Line strokes: https://observablehq.com/@onoratod/animate-a-path-in-d3
+    drawGridlines(7, 9, width, height, color_grid);
+
+    // Draw Residuals
+    drawResiduals(svg, data, color_residuals, x, y, predictPolynomial);
+
+    // Draw line for estimate
+    drawEstimateLine(svg, x, y, xmin, xmax, predictPolynomial, color_estimate);
+
+    // Add dots
+    addDots(svg, data, x, y, color_data);
+    
+    // Calculate error
+    let error = calcError(data, predictPolynomial);
+
+    // Title
+    addTitle(svg, font, width, margin, `Simple Polynomial Regression: c2 = ${c2.toFixed(2)}, c1 = ${c1.toFixed(2)}, b = ${b.toFixed(2)}, total error = ${error.toFixed(2)}`);
+
+    // y label
+    addYLabel(svg, font, height, margin, "Y values");
+
+    // x label
+    addXLabel(svg, font, width, height, margin, "X values");
+
+    // Legend
+    let center = height/2;
+    let spacing = 20;
+    let circle_radius = 6;
+    let icon_width = 24;
+    let legendX = width + 20;
+
+    // Data entry
+    addLegendEntry(svg, "circle", legendX, center - spacing, color_data, "Data", font, icon_width, circle_radius);
+
+    // Residuals entry
+    addLegendEntry(svg, "rect", legendX, center, color_residuals, "Residuals", font, icon_width, circle_radius);
+
+    // Estimate entry
+    addLegendEntry(svg, "rect", legendX, center + spacing, color_estimate, "Estimate c\u2082x\u00B2 + c\u2081x + b", font, icon_width, circle_radius);
+
+    // Find the solution to the regression
+    function solveRegression() {
+        // Extract X and y matrices
+        const X = data.map(d => [1, d.x, d.x ** 2]);
+        const y = data.map(d => d.y);
+
+        // Matrix multiplication
+        const X_t = math.transpose(X);
+        const X_tX = math.multiply(X_t, X);
+        const coefs = math.multiply(math.inv(X_tX), math.multiply(X_t, y));
+
+        // Extract coefficients and assign them to the box and sliders
+        const b = +coefs[0].toFixed(4);
+        const c1 = +coefs[1].toFixed(4);
+        const c2 = +coefs[2].toFixed(4);
+
+        document.getElementById('bBox').value = b;
+        document.getElementById('bSlider').value = b;
+        document.getElementById('c1Box').value = c1;
+        document.getElementById('c1Slider').value = c1;
+        document.getElementById('c2Box').value = c2;
+        document.getElementById('c2Slider').value = c2;
+    }
+
+    window.solveRegression = solveRegression;
 }
