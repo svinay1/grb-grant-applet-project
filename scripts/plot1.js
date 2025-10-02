@@ -20,8 +20,8 @@ function plot1() {
     var svg = appendSvg("#myplot", width, height, margin);
             
     // Read the data
-    d3.csv("https://raw.githubusercontent.com/lorenzoluzi/public_data/master/simple_data.csv", 
-        function(data) {
+    d3.csv("https://raw.githubusercontent.com/lorenzoluzi/public_data/master/simple_data.csv")
+        .then(function(data) {
         // Get m and b from variables drawn from text fields
         let m = parseFloat(document.getElementById('mBox').value);
         let b = parseFloat(document.getElementById('bBox').value);

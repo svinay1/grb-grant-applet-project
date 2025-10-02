@@ -22,9 +22,10 @@ function plot2() {
     // Get the data
     function generateUniformData(xmax, xmin, totalPoints) {
         const data = [];
+        const rand = d3.randomLcg(42);
         for (let i = 0; i < totalPoints; i++) {
-            const x = Math.random() * (xmax - xmin) + xmin;
-            const y = (x - 2.08) ** 2 - Math.random();
+            const x = rand() * (xmax - xmin) + xmin;
+            const y = (x - 2.08) ** 2 - rand();
             data.push({ x: x, y: y });
         }
         return data;
