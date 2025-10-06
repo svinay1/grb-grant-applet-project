@@ -56,7 +56,7 @@ function plot1() {
         let error = calcError(data, predictLinear);
 
         // Title
-        addTitle(svg, font, width, margin, `Simple Linear Regression: m = ${m.toFixed(2)}, b = ${b.toFixed(2)}, total error = ${error.toFixed(2)}`);
+        addTitle(font, `Simple Linear Regression: m = ${m.toFixed(2)}, b = ${b.toFixed(2)}, total error = ${error.toFixed(2)}`);
 
         // Y label
         addYLabel(svg, font, height, margin, "Y values");

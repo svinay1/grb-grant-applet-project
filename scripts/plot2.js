@@ -20,17 +20,6 @@ function plot2() {
     var svg = appendSvg("#myplot", width, height, margin);
             
     // Get the data
-    function generateUniformData(xmax, xmin, totalPoints) {
-        const data = [];
-        const rand = d3.randomLcg(42);
-        for (let i = 0; i < totalPoints; i++) {
-            const x = rand() * (xmax - xmin) + xmin;
-            const y = (x - 2.08) ** 2 - rand();
-            data.push({ x: x, y: y });
-        }
-        return data;
-    }
-
     const data = generateUniformData(0, 6, 100);
 
     // Get c2, c1, and b from variables drawn from text fields
@@ -68,7 +57,7 @@ function plot2() {
     let error = calcError(data, predictPolynomial);
 
     // Title
-    addTitle(svg, font, width, margin, `Simple Polynomial Regression: c2 = ${c2.toFixed(2)}, c1 = ${c1.toFixed(2)}, b = ${b.toFixed(2)}, total error = ${error.toFixed(2)}`);
+    addTitle(font, `Simple Polynomial Regression: c2 = ${c2.toFixed(2)}, c1 = ${c1.toFixed(2)}, b = ${b.toFixed(2)}, total error = ${error.toFixed(2)}`);
 
     // y label
     addYLabel(svg, font, height, margin, "Y values");
