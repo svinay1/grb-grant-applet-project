@@ -1,3 +1,14 @@
+function generateUniformData(xmax, xmin, totalPoints) {
+    const data = [];
+    const rand = d3.randomLcg(42);
+    for (let i = 0; i < totalPoints; i++) {
+        const x = rand() * (xmax - xmin) + xmin;
+        const y = (x - 2.08) ** 2 - rand();
+        data.push({ x: x, y: y });
+    }
+    return data;
+}
+
 function plot2() {
     // Colors used in plot
     let color_data = "#3070B7";
@@ -57,7 +68,7 @@ function plot2() {
     let error = calcError(data, predictPolynomial);
 
     // Title
-    addTitle(font, `Simple Polynomial Regression: c2 = ${c2.toFixed(2)}, c1 = ${c1.toFixed(2)}, b = ${b.toFixed(2)}, total error = ${error.toFixed(2)}`);
+    addTitle(`Simple Polynomial Regression: c2 = ${c2.toFixed(2)}, c1 = ${c1.toFixed(2)}, b = ${b.toFixed(2)}, total error = ${error.toFixed(2)}`);
 
     // y label
     addYLabel(svg, font, height, margin, "Y values");
@@ -65,21 +76,16 @@ function plot2() {
     // x label
     addXLabel(svg, font, width, height, margin, "X values");
 
-    // Legend
-    let center = height/2;
-    let spacing = 20;
-    let circle_radius = 6;
-    let icon_width = 24;
-    let legendX = width + 20;
+    d3.select("#legend").remove();
 
     // Data entry
-    addLegendEntry(svg, "circle", legendX, center - spacing, color_data, "Data", font, icon_width, circle_radius);
+    addLegendEntry("Data", "circle", color_data, 150, -400);
 
     // Residuals entry
-    addLegendEntry(svg, "rect", legendX, center, color_residuals, "Residuals", font, icon_width, circle_radius);
+    addLegendEntry("Residuals", "line", color_residuals, 150, -400);
 
     // Estimate entry
-    addLegendEntry(svg, "rect", legendX, center + spacing, color_estimate, "Estimate c\u2082x\u00B2 + c\u2081x + b", font, icon_width, circle_radius);
+    addLegendEntry("Estimate c\u2082x\u00B2 + c\u2081x + b", "line", color_estimate, 150, -400);
 
     // Find the solution to the regression
     function solveRegression() {
