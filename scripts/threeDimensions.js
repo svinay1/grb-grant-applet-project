@@ -124,32 +124,33 @@ function drawPlane(scene, c2, c1, b, planeSize, color) {
 function drawResiduals(scene, data, c2, c1, b) {
     scene.selectAll("Group.residuals").remove(); 
     
-    // Format the residuals for plotting.
+    // Draw the residuals as cylinders to adjust the thickness.
     const residuals = data.map(d => {
         const y_hat = c2 * d.x2 + c1 * d.x1 + b;
         return {
-            start: [d.x1, d.y, d.x2],
-            end: [d.x1, y_hat, d.x2]
+            height: Math.abs(d.y - y_hat),
+            midpoint: [d.x1, (d.y + y_hat) / 2, d.x2] 
         };
     });
 
+    // Add the actual cylinders at the appropriate midpoints.
     const residualGroup = scene.append("Group").attr("class", "residuals");
-
-    // Format the residuals.
-    residualGroup.selectAll("Shape.residual-line")
+    const residualTransforms = residualGroup.selectAll("Transform")
         .data(residuals)
         .enter()
-        .append("Shape")
-        .attr("class", "residual-line")
-        .append("Appearance")
-        .append("Material")
-        .attr("emissiveColor", "red");
+        .append("Transform")
+        .attr("translation", d => d.midpoint.join(' '));
 
-    residualGroup.selectAll("Shape.residual-line")
-        .append("IndexedLineSet")
-        .attr("coordIndex", "0 1")
-        .append("Coordinate")
-        .attr("point", d => `${d.start.join(' ')} ${d.end.join(' ')}`);
+    // Format the residual cylinder.
+    const residualShapes = residualTransforms.append("Shape");
+
+    residualShapes.append("Appearance")
+        .append("Material")
+        .attr("diffuseColor", "red");
+
+    residualShapes.append("Cylinder")
+        .attr("height", d => d.height) 
+        .attr("radius", "0.02");       
 }
 
 function calcError3D(data, predictY) {

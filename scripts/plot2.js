@@ -68,7 +68,7 @@ function plot2() {
     let error = calcError(data, predictPolynomial);
 
     // Title
-    addTitle(`Simple Polynomial Regression: c2 = ${c2.toFixed(2)}, c1 = ${c1.toFixed(2)}, b = ${b.toFixed(2)}, total error = ${error.toFixed(2)}`);
+    addTitle(`Simple Polynomial Regression: c\u2082 = ${c2.toFixed(2)}, c\u2081 = ${c1.toFixed(2)}, b = ${b.toFixed(2)}, total error = ${error.toFixed(2)}`);
 
     // y label
     addYLabel(svg, font, height, margin, "Y values");
