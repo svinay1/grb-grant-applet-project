@@ -1,16 +1,18 @@
 function generateUniformData(n, c2, c1, b) {
     // Generate uniform data for this plot.
     const points = [];
-    for (let i = 0; i < n; i++) {
-        const x1 = (Math.random() - 0.5) * 10;
-        const x2 = (Math.random() - 0.5) * 10;
+    const rand = d3.randomLcg(42);
+    while(points.length < n) {
+        const x1 = (rand() - 0.5) * 10;
+        const x2 = (rand() - 0.5) * 10;
 
-        const y = c2 * x1 + c1 * x2 + b + (Math.random() - 0.5) * 2;
+        const y = c2 * x1 + c1 * x2 + b + (rand() - 0.5) * 2;
 
         if (y >= -5 && y <= 5) {
             points.push({ x1, x2, y });
         }
     }
+    console.log(points);
     return points;
 }
 
@@ -62,7 +64,7 @@ const plot3 = (function() {
         const predictPolynomial = (x1, x2) => c2 * x2 + c1 * x1 + b;
 
         // Draw the plane and residuals
-        drawPlane(scene, c2, c1, b, 8, '#377e22');
+        drawPlane(scene, c2, c1, b, 10, '#377e22');
         drawResiduals(scene, data, c2, c1, b);
 
         // Calculate error
