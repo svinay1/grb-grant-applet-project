@@ -50,7 +50,7 @@ function plot1() {
         drawEstimateLine(svg, x, y, xmin, xmax, predictLinear, color_estimate);
 
         // Add dots
-        addDots(svg, data, x, y, color_data);
+        addDots(svg, data, x, y, color_data, "circle");
         
         // Calculate error
         let error = calcError(data, predictLinear);

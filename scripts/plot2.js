@@ -62,7 +62,7 @@ function plot2() {
     drawEstimateLine(svg, x, y, xmin, xmax, predictPolynomial, color_estimate);
 
     // Add dots
-    addDots(svg, data, x, y, color_data);
+    addDots(svg, data, x, y, color_data, "circle");
     
     // Calculate error
     let error = calcError(data, predictPolynomial);

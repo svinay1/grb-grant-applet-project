@@ -89,15 +89,35 @@ function drawEstimateLine(svg, x, y, xmin, xmax, predictY, color_estimate, numPo
 
 function addDots(svg, data, x, y, color_data) {
     // Add dots to the plot
+    const circleGenerator = d3.symbol()
+        .type(d3.symbolCircle)
+        .size(60); 
+
+    const crossGenerator = d3.symbol()
+        .type(d3.symbolCross)
+        .size(60);
+
     svg.append('g')
-        .selectAll("dot")
-        .data(data)
-        .enter()
-        .append("circle")
-        .attr("cx", function (d) { return x(d.x); } )
-        .attr("cy", function (d) { return y(d.y); } )
-        .attr("r", 3.5)
-        .style("fill", color_data)
+    .selectAll("dot")
+    .data(data)
+    .enter()
+    .append("path") 
+    .attr("transform", function (d) {
+        return "translate(" + x(d.x) + "," + y(d.y) + ") rotate(45)";
+    })
+    .attr("d", function(d) {
+        if (d.marker === undefined || d.marker === 'o') {
+            return circleGenerator();
+        } else if (d.marker === 'x') {
+            return crossGenerator(); 
+        }
+    })
+    .style("fill", function(d) {
+        if (d.color === undefined) {
+            return color_data;
+        }
+        return d.color;
+    });
 }
 
 function calcError(data, predictY) {
@@ -117,7 +137,7 @@ function addYLabel(svg, font, height, margin, text) {
         .attr("text-anchor", "middle")
         .attr("transform", "rotate(-90)")
         .attr("x", -height/2)
-        .attr("y", -margin.left/2)
+        .attr("y", margin)
         .text(text)
 }
 

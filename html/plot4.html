@@ -78,35 +78,27 @@
 
     <!-- Create a div where the graph will take place -->
     <center>
-      <div id="myplot"></div>
-        
+        <div id="myplot"></div>
         <div>
         <form>
-            <td>$c_2=$</td>
-            <td><input id="c2Slider", type="range", name="c2Slider", size="7", class="slider", 
-                    value="0.5", step="0.1", min="-5",  max="5", oninput="this.form.c2Box.value=this.value; plot4()"></td>
-            <td><input id="c2Box", type="number", name="c2Box", size="20", class="button",
-                    value="0.5", step="0.1", min="-5",  max="5", oninput="this.form.c2Slider.value=this.value; plot4()" /></td>
-        </div>
-        <div>
-            <td>$c_1=$</td>
-            <td><input id="c1Slider", type="range", name="c1Slider", size="7", class="slider", 
-                    value="-0.5", step="0.1", min="-5", max="5", oninput="this.form.c1Box.value=this.value; plot4()">
-            <input id="c1Box", type="number", name="c1Box", size="20", class="button",
-                    value="-0.5", step="0.1", min="-5", max="5", oninput="this.form.c1Slider.value=this.value; plot4()" /></td>
+            <td>$m=$</td>
+            <td><input id="mSlider", type="range", name="mSlider", size="7", class="slider", 
+                    value="0.5", step="0.1", min="-5",  max="5", oninput="this.form.mBox.value=this.value; plot1()"></td>
+            <td><input id="mBox", type="number", name="mBox", size="20", class="button",
+                    value="0.5", step="0.1", min="-5",  max="5", oninput="this.form.mSlider.value=this.value; plot1()" /></td>
         </div>
         <div>
             <td>$b=$</td>
             <td><input id="bSlider", type="range", name="bSlider", size="7", class="slider", 
-                    value="-0.5", step="0.1", min="-5", max="5", oninput="this.form.bBox.value=this.value; plot4()">
+                    value="-0.5", step="0.1", min="-5", max="5", oninput="this.form.bBox.value=this.value; plot1()">
             <input id="bBox", type="number", name="bBox", size="20", class="button",
-                    value="-0.5", step="0.1", min="-5", max="5", oninput="this.form.bSlider.value=this.value; plot4()" /></td>
+                    value="-0.5", step="0.1", min="-5", max="5", oninput="this.form.bSlider.value=this.value; plot1()" /></td>
         </div>
     
         <div><button id="optimal", type="button", name="optimal", class="button2", 
                 onclick="  
                     solveRegression();
-                    plot4();">
+                    plot1();">
             Solution!</button>
         </div>
         </form>

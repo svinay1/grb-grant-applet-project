@@ -69,7 +69,7 @@ function addLegendEntry(label, type, color, posTop, posRight) {
         .style("display", "flex")
         .style("align-items", "center");
 
-    legend.selectAll(".legend-item").style("margin-bottom", "5px");
+    legend.selectAll(".legend-item").style("margin-bottom", "10px");
     legend.select(".legend-item:last-child").style("margin-bottom", "0");
 
     const icon = legendItem.append("span")
@@ -83,6 +83,14 @@ function addLegendEntry(label, type, color, posTop, posRight) {
         icon.style("background-color", color).style("border-radius", "50%");
     } else if (type === 'line') { 
         icon.style("background-color", color).style("height", "3px").style("border", "none");
+    } else if (type === 'x') { 
+        icon.style("background-color", "transparent") 
+            .style("color", color) 
+            .style("font-size", "1.6em") 
+            .style("font-weight", "bold")
+            .style("line-height", "0.8") 
+            .style("border", "none")
+            .html("&times;");
     } else { 
         icon.style("background-color", color);
     }
