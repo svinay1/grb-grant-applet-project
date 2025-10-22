@@ -12,7 +12,6 @@ function generateUniformData(n, c2, c1, b) {
             points.push({ x1, x2, y });
         }
     }
-    console.log(points);
     return points;
 }
 
