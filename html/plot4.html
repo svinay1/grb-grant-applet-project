@@ -83,22 +83,22 @@
         <form>
             <td>$m=$</td>
             <td><input id="mSlider", type="range", name="mSlider", size="7", class="slider", 
-                    value="0.5", step="0.1", min="-5",  max="5", oninput="this.form.mBox.value=this.value; plot1()"></td>
+                    value="0.5", step="0.1", min="-5",  max="5", oninput="this.form.mBox.value=this.value; plot4()"></td>
             <td><input id="mBox", type="number", name="mBox", size="20", class="button",
-                    value="0.5", step="0.1", min="-5",  max="5", oninput="this.form.mSlider.value=this.value; plot1()" /></td>
+                    value="0.5", step="0.1", min="-5",  max="5", oninput="this.form.mSlider.value=this.value; plot4()" /></td>
         </div>
         <div>
             <td>$b=$</td>
             <td><input id="bSlider", type="range", name="bSlider", size="7", class="slider", 
-                    value="-0.5", step="0.1", min="-5", max="5", oninput="this.form.bBox.value=this.value; plot1()">
+                    value="-0.5", step="0.1", min="-5", max="5", oninput="this.form.bBox.value=this.value; plot4()">
             <input id="bBox", type="number", name="bBox", size="20", class="button",
-                    value="-0.5", step="0.1", min="-5", max="5", oninput="this.form.bSlider.value=this.value; plot1()" /></td>
+                    value="-0.5", step="0.1", min="-5", max="5", oninput="this.form.bSlider.value=this.value; plot4()" /></td>
         </div>
     
         <div><button id="optimal", type="button", name="optimal", class="button2", 
                 onclick="  
                     solveRegression();
-                    plot1();">
+                    plot4();">
             Solution!</button>
         </div>
         </form>
