@@ -65,6 +65,30 @@ function drawResiduals(svg, data, color_residuals, x, y, predictY) {
         .attr("class", "error");
 }
 
+function drawVerticalLine(svg, x_scale, y_scale, x_value, color) {
+    // Note the boundaries of the plot
+    const x_coord = x_scale(x_value);
+    const y_range = y_scale.range();
+    const y_bottom = y_range[0]; 
+    const y_top = y_range[1];    
+
+    // Draw the vertical line
+    svg.append("line")
+        .attr("x1", x_coord)
+        .attr("y1", y_bottom) 
+        .attr("x2", x_coord)
+        .attr("y2", y_top)     
+        .attr("stroke", color)
+        .attr("stroke-width", 2)
+        .attr("stroke-dasharray", "6, 4")
+        .attr("stroke-opacity", 0.6);
+
+    // Draw the triangle
+    svg.append("polygon")
+        .attr("points", `${x_coord - 7}, ${y_bottom} ${x_coord + 7}, ${y_bottom} ${x_coord}, ${y_bottom - 15}`)
+        .attr("fill", "red");
+}
+
 function drawEstimateLine(svg, x, y, xmin, xmax, predictY, color_estimate, numPoints = 100) {
     // Multiple points to draw line/curve
     const lineData = [];
@@ -188,4 +212,24 @@ function addYAxis(svg, ymin, ymax, width, height) {
         .attr("transform", `translate(${width},0)`);
 
     return y;
+}
+
+function addYAxisLabels(svg, ymin, ymax, width, height) {
+    // Add right-side label at bottom
+    svg.append("text")
+        .attr("x", width + 10) 
+        .attr("y", ymin + height + 3)   
+        .text("0")
+        .style("font-size", "12px")
+        .attr("fill", "black")
+        .attr("text-anchor", "start"); 
+
+    // Add right-side label at top
+    svg.append("text")
+        .attr("x", width + 10) 
+        .attr("y", ymax + 3) 
+        .text("1")
+        .style("font-size", "12px")
+        .attr("fill", "black")
+        .attr("text-anchor", "start"); 
 }

@@ -54,7 +54,7 @@ function plot4() {
     // Append the svg object to the body of the page
     var svg = appendSvg("#myplot", width, height, margin);
             
-    // Get the data and accuracy
+    // Get the data and accuracyx
     let initialData = generateUniformData(50);
 
     // Get m and b from variables drawn from text fields
@@ -75,6 +75,7 @@ function plot4() {
 
     // Add y axis
     let y = addYAxis(svg, ymin, ymax, width, height);
+    addYAxisLabels(svg, 0, 1, width + margin.right / 50, height);
 
     // Grid lines
     // Line strokes: https://observablehq.com/@onoratod/animate-a-path-in-d3
@@ -82,6 +83,12 @@ function plot4() {
 
     // Draw line for estimate
     drawEstimateLine(svg, x, y, xmin, xmax, predictY, color_estimate);
+
+    // Draw decision boundary line
+    if (m != 0 && (-b / m) >= -5 && (-b / m) <= 5) {
+        const decision_boundary = -b / m;
+        drawVerticalLine(svg, x, y, decision_boundary, 'red');
+    }
 
     // Add dots
     addDots(svg, data, x, y, color_data);
