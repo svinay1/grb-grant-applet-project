@@ -56,7 +56,7 @@ function plot1() {
         let error = calcError(data, predictLinear);
 
         // Title
-        addTitle(font, `Simple Linear Regression: m = ${m.toFixed(2)}, b = ${b.toFixed(2)}, total error = ${error.toFixed(2)}`);
+        addTitle(`Simple Linear Regression: m = ${m.toFixed(2)}, b = ${b.toFixed(2)}, total error = ${error.toFixed(2)}`, '#myplot', '0px');
 
         // Y label
         addYLabel(svg, font, height, margin, "Y values");
@@ -72,13 +72,13 @@ function plot1() {
         let legendX = width + 20;
 
         // Data entry
-        addLegendEntry(svg, "circle", legendX, center - spacing, color_data, "Data", font, icon_width, circle_radius);
+        addLegendEntry('#myplot', svg, "circle", legendX, center - spacing, color_data, "Data", font, icon_width, circle_radius);
 
         // Residuals entry
-        addLegendEntry(svg, "rect", legendX, center, color_residuals, "Residuals", font, icon_width, circle_radius);
+        addLegendEntry('#myplot', svg, "rect", legendX, center, color_residuals, "Residuals", font, icon_width, circle_radius);
 
         // Estimate entry
-        addLegendEntry(svg, "rect", legendX, center + spacing, color_estimate, "Estimate mx+b", font, icon_width, circle_radius);
+        addLegendEntry('#myplot', svg, "rect", legendX, center + spacing, color_estimate, "Estimate mx+b", font, icon_width, circle_radius);
 
         // Find the solution to the regression
         function solveRegression() {

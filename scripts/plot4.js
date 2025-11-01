@@ -94,7 +94,7 @@ function plot4() {
     addDots(svg, data, x, y, color_data);
     
     // Title
-    addTitle(`Doing Logistic Regression Manually: accuracy = ${accuracy.toFixed(1)}%`);
+    addTitle(`Doing Logistic Regression Manually: accuracy = ${accuracy.toFixed(1)}%`, '#myplot', '0px');
 
     // y label
     addYLabel(svg, font, height, -margin.left / 2, "Probability that y=1");
@@ -106,10 +106,10 @@ function plot4() {
     d3.select("#legend").remove();
 
     // Legend entries
-    addLegendEntry("y=1; pred=1", "circle", 'orange', 150, -400);
-    addLegendEntry("y=1; pred=0", "x", 'orange', 150, -400);
-    addLegendEntry("y=0; pred=0", "x", 'blue', 150, -400);
-    addLegendEntry("y=0; pred=1", "circle", 'blue', 150, -400);
+    addLegendEntry('#myplot', "y=1; pred=1", "circle", 'orange', 150, -400);
+    addLegendEntry('#myplot', "y=1; pred=0", "x", 'orange', 150, -400);
+    addLegendEntry('#myplot', "y=0; pred=0", "x", 'blue', 150, -400);
+    addLegendEntry('#myplot', "y=0; pred=1", "circle", 'blue', 150, -400);
 
     // Find the solution to the regression
     function solveRegression() {

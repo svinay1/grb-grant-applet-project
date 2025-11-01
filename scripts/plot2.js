@@ -68,7 +68,7 @@ function plot2() {
     let error = calcError(data, predictPolynomial);
 
     // Title
-    addTitle(`Simple Polynomial Regression: c\u2082 = ${c2.toFixed(2)}, c\u2081 = ${c1.toFixed(2)}, b = ${b.toFixed(2)}, total error = ${error.toFixed(2)}`);
+    addTitle(`Simple Polynomial Regression: c\u2082 = ${c2.toFixed(2)}, c\u2081 = ${c1.toFixed(2)}, b = ${b.toFixed(2)}, total error = ${error.toFixed(2)}`, '#myplot', '0px');
 
     // y label
     addYLabel(svg, font, height, margin, "Y values");
@@ -79,13 +79,13 @@ function plot2() {
     d3.select("#legend").remove();
 
     // Data entry
-    addLegendEntry("Data", "circle", color_data, 150, -400);
+    addLegendEntry('#myplot', "Data", "circle", color_data, 150, -400);
 
     // Residuals entry
-    addLegendEntry("Residuals", "line", color_residuals, 150, -400);
+    addLegendEntry('#myplot', "Residuals", "line", color_residuals, 150, -400);
 
     // Estimate entry
-    addLegendEntry("Estimate c\u2082x\u00B2 + c\u2081x + b", "line", color_estimate, 150, -400);
+    addLegendEntry('#myplot', "Estimate c\u2082x\u00B2 + c\u2081x + b", "line", color_estimate, 150, -400);
 
     // Find the solution to the regression
     function solveRegression() {

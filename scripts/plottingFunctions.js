@@ -1,11 +1,11 @@
-function removePlot(plotName) {
+function removePlot(plot) {
     // Remove the plot if it alread exists (e.g., if we refresh it)
-    d3.select(plotName).selectAll("*").remove();
+    d3.select(plot).selectAll("*").remove();
 }
 
-function appendSvg(plotName, width, height, margin) {
+function appendSvg(plot, width, height, margin) {
     // Append the svg object to the body of the page
-    var svg = d3.select(plotName)
+    var svg = d3.select(plot)
         .append("svg")
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
@@ -15,10 +15,11 @@ function appendSvg(plotName, width, height, margin) {
     return svg;
 }
 
-function addTitle(text) {
-    d3.select("#plot-title").remove();
+function addTitle(text, plot, space_below) {
+    const titleId = plot.substring(1) + "-title"; 
+    d3.select("#" + titleId).remove();
 
-    const target = d3.select('#myplot');
+    const target = d3.select(plot);
     if (target.empty()) {
         console.error("Title target not found:", targetSelector);
         return;
@@ -31,17 +32,17 @@ function addTitle(text) {
         .style("font-weight", "bold")
         .style("text-align", "center")
         .style("margin-top", "50px")
-        .style("margin-bottom", "0")
+        .style("margin-bottom", space_below)
         .text(text)
         .node(); 
 
-    target.node().parentNode.insertBefore(titleElement, target.node());
+    target.node().prepend(titleElement);
 }
 
-function addLegendEntry(label, type, color, posTop, posRight) {
+function addLegendEntry(plot, label, type, color, posTop, posRight) {
     let legend = d3.select("#legend");
     if (legend.empty()) {
-        const plotElement = d3.select('#myplot').node();
+        const plotElement = d3.select(plot).node();
         if (!plotElement) {
             console.error("Plot element not found:", plotId);
             return;

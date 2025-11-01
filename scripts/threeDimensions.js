@@ -75,7 +75,7 @@ function drawPoints(scene, data) {
         .attr("radius", "0.15");
 }
 
-function drawPlane(scene, c2, c1, b, planeSize, color) {
+function drawPlane(scene, c2, c1, b, planeSize, color, logistic=false) {
     scene.select("Shape.regression-plane").remove();
     const pointsPerSide = 20;
     const vertices = [];
@@ -88,6 +88,9 @@ function drawPlane(scene, c2, c1, b, planeSize, color) {
             let x_val = -(planeSize / 2) + j * step;
             let z_val = -(planeSize / 2) + i * step;
             let y_val = c1 * x_val + c2 * z_val + b;
+            if (logistic) {
+                y_val = 100 / (1 + Math.exp(-y_val));
+            }
             vertices.push(`${x_val} ${y_val} ${z_val}`);
         }
     }

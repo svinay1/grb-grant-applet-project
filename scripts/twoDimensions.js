@@ -111,7 +111,7 @@ function drawEstimateLine(svg, x, y, xmin, xmax, predictY, color_estimate, numPo
         );
 }
 
-function addDots(svg, data, x, y, color_data) {
+function addDots(svg, data, x, y, color_data, x2_present=false) {
     // Add dots to the plot
     const circleGenerator = d3.symbol()
         .type(d3.symbolCircle)
@@ -127,7 +127,10 @@ function addDots(svg, data, x, y, color_data) {
     .enter()
     .append("path") 
     .attr("transform", function (d) {
-        return "translate(" + x(d.x) + "," + y(d.y) + ") rotate(45)";
+        if (x2_present) {
+            return "translate(" + x(d.x1) + "," + y(d.x2) + ") rotate(45)";
+        }
+        return "translate(" + x(d.x1) + "," + y(d.y) + ") rotate(45)";
     })
     .attr("d", function(d) {
         if (d.marker === undefined || d.marker === 'o') {

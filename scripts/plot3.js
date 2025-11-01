@@ -70,18 +70,18 @@ const plot3 = (function() {
         let error = calcError3D(data, predictPolynomial);
 
         // Title
-        addTitle(`Multilinear Regression: c\u2082 = ${c2.toFixed(2)}, c\u2081 = ${c1.toFixed(2)}, b = ${b.toFixed(2)}, total error = ${error.toFixed(2)}`);
+        addTitle(`Multilinear Regression: c\u2082 = ${c2.toFixed(2)}, c\u2081 = ${c1.toFixed(2)}, b = ${b.toFixed(2)}, total error = ${error.toFixed(2)}`, '#myplot', '0px');
 
         d3.select("#legend").remove();
 
         // Data entry
-        addLegendEntry("Data", "circle", color_data, 250, 0);
+        addLegendEntry('#myplot', "Data", "circle", color_data, 250, 0);
 
         // Residuals entry
-        addLegendEntry("Residuals", "line", color_residuals, 250, 0);
+        addLegendEntry('#myplot', "Residuals", "line", color_residuals, 250, 0);
 
         // Estimate entry
-        addLegendEntry("Estimate c\u2082x\u2082 + c\u2081x\u2081 + b", "line", color_estimate, 250, -100);
+        addLegendEntry('#myplot', "Estimate c\u2082x\u2082 + c\u2081x\u2081 + b", "line", color_estimate, 250, -100);
     }
 
     // Output the solution to the regression
