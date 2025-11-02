@@ -38,7 +38,6 @@ function plot2() {
     let c1 = parseFloat(document.getElementById('c1Box').value) || 0;
     let b = parseFloat(document.getElementById('bBox').value) || 0;
 
-
     // Set the function.
     const predictPolynomial = x => c2 * (x ** 2) + c1 * x + b;
 
@@ -62,7 +61,7 @@ function plot2() {
     drawEstimateLine(svg, x, y, xmin, xmax, predictPolynomial, color_estimate);
 
     // Add dots
-    addDots(svg, data, x, y, color_data, "circle");
+    addDots(svg, data, x, y, color_data);
     
     // Calculate error
     let error = calcError(data, predictPolynomial);
@@ -71,7 +70,7 @@ function plot2() {
     addTitle(`Simple Polynomial Regression: c\u2082 = ${c2.toFixed(2)}, c\u2081 = ${c1.toFixed(2)}, b = ${b.toFixed(2)}, total error = ${error.toFixed(2)}`, '#myplot', '0px');
 
     // y label
-    addYLabel(svg, font, height, margin, "Y values");
+    addYLabel(svg, font, height, -margin.left/2, "Y values");
 
     // x label
     addXLabel(svg, font, width, height, margin, "X values");
