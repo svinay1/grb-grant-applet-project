@@ -1,4 +1,4 @@
-function generateUniformData(totalPoints) {
+function generateData(totalPoints) {
     const rand = d3.randomLcg(42);
     const data = [];
 
@@ -77,7 +77,7 @@ function plot5() {
             const color_grid = "#E0E0E0";
             
             // Generate the data.
-            initialData = generateUniformData(50);
+            initialData = generateData(50);
             
             drawGrid(scene, scene_size, num_grid_lines, color_grid);
 
@@ -97,7 +97,7 @@ function plot5() {
             
             let { data, _ } = getAccuracy(predictY_init, initialData);
             
-            drawPoints(scene, data); 
+            drawPoints(scene, data, true); 
 
             isSceneInitialized = true;
         }
@@ -114,12 +114,12 @@ function plot5() {
     const predictY = (x1, x2) => 100 / (1 + Math.exp(-(c2 * x2 + c1 * x1 + b)));
 
     drawPlane(scene, c2, c1, b, 10, color_estimate, true);
-    //drawDecisionBoundary3D(scene, c2, c1, b, 10, 'green');
+    drawDecisionBoundary(scene, c2, c1, b, 10, 'red');
 
     let { data, accuracy } = getAccuracy(predictY, initialData);
     
     // Min and max x and y
-    let xmin = -5, xmax = 5, ymin = 0, ymax = 100;
+    let xmin = -5, xmax = 5
 
     // Add x axis
     let x1 = addXAxis(svg, xmin, xmax, width, height);
@@ -129,6 +129,9 @@ function plot5() {
 
     // Grid lines
     drawGridlines(7, 9, width, height, color_grid);
+
+    // Draw the decision boundary
+    drawHorizontalLine(svg, x1, x2, 0, 'red');
 
     // Add 2D dots
     addDots(svg, data, x1, x2, color_data, true);

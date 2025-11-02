@@ -9,7 +9,7 @@ function generateUniformData(n, c2, c1, b) {
         const y = c2 * x1 + c1 * x2 + b + (rand() - 0.5) * 2;
 
         if (y >= -5 && y <= 5) {
-            points.push({ x1 : x1, x2 : x2, y_pred : y });
+            points.push({ x1 : x1, x2 : x2, y : y });
         }
     }
     return points;

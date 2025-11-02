@@ -57,14 +57,20 @@ function drawAxis(scene, color, label, start, end, labelPos) {
             .attr("family", '"SANS"');
 }
 
-function drawPoints(scene, data) {
+function drawPoints(scene, data, logistic=false) {
     const dataGroup = scene.append("Group").attr("class", "data-points");
-    // Format the points themselves.
+    // Format the points themselves.    
     const shapes = dataGroup.selectAll("Transform")
         .data(data)
         .enter()
         .append("Transform")
-        .attr("translation", d => `${d.x1} ${d.y_pred} ${d.x2}`)
+        .attr("translation", d => {
+            let toDraw = d.y;
+            if (logistic) {
+                toDraw = (toDraw / 10) - 5;
+            }
+            return `${d.x1} ${toDraw} ${d.x2}`;
+        })
         .append("Shape")
 
     
@@ -174,5 +180,59 @@ function calcError3D(data, predictY) {
     }
     error = error / data.length;
     return error;
+}
+
+function drawDecisionBoundary(scene, c2, c1, b, sceneSize, color) {
+    scene.select(".decision-boundary-group").remove();
+
+    const x1_min = -sceneSize / 2;
+    const x1_max = sceneSize / 2;
+    const x2_min = -sceneSize / 2;
+    const x2_max = sceneSize / 2;
+
+    let lineStart = [0, 0, 0];
+    let lineEnd = [0, 0, 0];
+
+    if (Math.abs(c2) > 0.1) {
+        let x2_min_res = (-b - c1 * x1_min) / c2;
+        let x2_max_res = (-b - c1 * x1_max) / c2;
+
+        lineStart = [x1_min, 0, x2_min_res];
+        lineEnd = [x1_max, 0, x2_max_res];
+
+    } else if (Math.abs(c1) > 0.1) {
+        let x1_min_res = (-b - c2 * x2_min) / c1;
+        let x1_max_res = (-b - c2 * x2_max) / c1;
+
+        lineStart = [x1_min_res, 0, x2_min];
+        lineEnd = [x1_max_res, 0, x2_max];
+    } else {
+        return;
+    }
+
+    const vector = [lineEnd[0] - lineStart[0], 0, lineEnd[2] - lineStart[2]];
+    const length = Math.sqrt(vector[0] ** 2 + vector[2] ** 2);
+    const norm = [vector[0] / length, 0, vector[2] / length];
+    const midpoint = [(lineStart[0] + lineEnd[0]) / 2, 0, (lineStart[2] + lineEnd[2]) / 2]
+
+    const rotation_axis = `${norm[2]} 0 ${-norm[0]}`;
+    const rotation_angle = "1.5708";
+
+    const boundaryGroup = scene.append("Group")
+        .attr("class", "decision-boundary-group");
+
+    const transform = boundaryGroup.append("Transform")
+        .attr("translation", midpoint.join(' '))
+        .attr("rotation", `${rotation_axis} ${rotation_angle}`);
+
+    const shape = transform.append("Shape");
+
+    shape.append("Appearance")
+        .append("Material")
+        .attr("diffuseColor", color);
+
+    shape.append("Cylinder")
+        .attr("height", length)
+        .attr("radius", "0.03");
 }
 

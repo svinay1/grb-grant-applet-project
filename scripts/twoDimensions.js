@@ -65,6 +65,25 @@ function drawResiduals(svg, data, color_residuals, x, y, predictY) {
         .attr("class", "error");
 }
 
+function drawHorizontalLine(svg, x_scale, y_scale, y_value, color) {
+    // Note the boundaries of the plot
+    const y_coord = y_scale(y_value);
+    const x_range = x_scale.range();
+    const x_left = x_range[0]; 
+    const x_right = x_range[1];    
+
+    // Draw the vertical line
+    svg.append("line")
+        .attr("x1", x_left)
+        .attr("y1", y_coord) 
+        .attr("x2", x_right)
+        .attr("y2", y_coord)     
+        .attr("stroke", color)
+        .attr("stroke-width", 2)
+        .attr("stroke-dasharray", "6, 4")
+        .attr("stroke-opacity", 0.6);
+}
+
 function drawVerticalLine(svg, x_scale, y_scale, x_value, color) {
     // Note the boundaries of the plot
     const x_coord = x_scale(x_value);
@@ -130,7 +149,7 @@ function addDots(svg, data, x, y, color_data, x2_present=false) {
         if (x2_present) {
             return "translate(" + x(d.x1) + "," + y(d.x2) + ") rotate(45)";
         }
-        return "translate(" + x(d.x1) + "," + y(d.y) + ") rotate(45)";
+        return "translate(" + x(d.x) + "," + y(d.y) + ") rotate(45)";
     })
     .attr("d", function(d) {
         if (d.marker === undefined || d.marker === 'o') {
