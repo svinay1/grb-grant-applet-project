@@ -15,7 +15,7 @@ function appendSvg(plot, width, height, margin) {
     return svg;
 }
 
-function addTitle(text, plot, space_below) {
+function addTitle(text, plot, space_below="0px") {
     const titleId = plot.substring(1) + "-title"; 
     d3.select("#" + titleId).remove();
 
@@ -26,7 +26,7 @@ function addTitle(text, plot, space_below) {
     }
 
     const titleElement = d3.create("h2")
-        .attr("id", "plot-title")
+        .attr("id", titleId)
         .style("font-family", "Arial, sans-serif")
         .style("font-size", "22px")
         .style("font-weight", "bold")

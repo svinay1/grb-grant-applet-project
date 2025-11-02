@@ -60,19 +60,28 @@ function drawAxis(scene, color, label, start, end, labelPos) {
 function drawPoints(scene, data) {
     const dataGroup = scene.append("Group").attr("class", "data-points");
     // Format the points themselves.
-    dataGroup.selectAll("Transform")
+    const shapes = dataGroup.selectAll("Transform")
         .data(data)
         .enter()
         .append("Transform")
-        .attr("translation", d => `${d.x1} ${d.y} ${d.x2}`)
+        .attr("translation", d => `${d.x1} ${d.y_pred} ${d.x2}`)
         .append("Shape")
-        .append("Appearance")
-        .append("Material")
-        .attr("diffuseColor", "#3070B7");
 
-    dataGroup.selectAll("Shape")
-        .append("Sphere")
-        .attr("radius", "0.15");
+    
+    shapes.append("Appearance")
+        .append("Material")
+        .attr("diffuseColor", d => d.color || '#3070B7');
+
+    shapes.each(function(d) {
+        const shape = d3.select(this); 
+        if (d.marker === undefined || d.marker === 'o') {
+            shape.append("Sphere")
+                 .attr("radius", "0.15");
+        } else if (d.marker === 'x') {
+            shape.append("Box")
+                 .attr("size", "0.2 0.2 0.2"); 
+        }
+    });
 }
 
 function drawPlane(scene, c2, c1, b, planeSize, color, logistic=false) {
@@ -90,6 +99,7 @@ function drawPlane(scene, c2, c1, b, planeSize, color, logistic=false) {
             let y_val = c1 * x_val + c2 * z_val + b;
             if (logistic) {
                 y_val = 100 / (1 + Math.exp(-y_val));
+                y_val = (y_val / 10) - 5;
             }
             vertices.push(`${x_val} ${y_val} ${z_val}`);
         }
@@ -160,7 +170,7 @@ function calcError3D(data, predictY) {
     // Calculate the error (predictY is the regression function)
     let error = 0;
     for (let i = 0; i < data.length; i++) {
-        error += Math.abs(data[i].y - predictY(data[i].x1, data[i].x2));
+        error += Math.abs(data[i].y_pred - predictY(data[i].x1, data[i].x2));
     }
     error = error / data.length;
     return error;
