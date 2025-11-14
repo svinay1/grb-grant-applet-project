@@ -65,19 +65,26 @@ function drawResiduals(svg, data, color_residuals, x, y, predictY) {
         .attr("class", "error");
 }
 
-function drawHorizontalLine(svg, x_scale, y_scale, y_value, color) {
+function drawDecisionBoundary2D(svg, x_scale, y_scale, c1, c2, b, color) {
     // Note the boundaries of the plot
-    const y_coord = y_scale(y_value);
     const x_range = x_scale.range();
-    const x_left = x_range[0]; 
-    const x_right = x_range[1];    
+    let x_left = x_scale.invert(x_range[0]); 
+    let x_right = x_scale.invert(x_range[1]);    
 
-    // Draw the vertical line
+    let y_left = -(c1 / c2) * x_left - (b / c2);
+    let y_right = -(c1 / c2) * x_right - (b / c2);
+
+    x_left = x_scale(x_left);
+    x_right = x_scale(x_right);
+    y_left = y_scale(y_left);
+    y_right = y_scale(y_right);
+
+    // Draw the horizontal line
     svg.append("line")
         .attr("x1", x_left)
-        .attr("y1", y_coord) 
+        .attr("y1", y_left) 
         .attr("x2", x_right)
-        .attr("y2", y_coord)     
+        .attr("y2", y_right)     
         .attr("stroke", color)
         .attr("stroke-width", 2)
         .attr("stroke-dasharray", "6, 4")
@@ -136,8 +143,8 @@ function addDots(svg, data, x, y, color_data, x2_present=false) {
         .type(d3.symbolCircle)
         .size(60); 
 
-    const crossGenerator = d3.symbol()
-        .type(d3.symbolCross)
+    const squareGenerator = d3.symbol()
+        .type(d3.symbolSquare)
         .size(60);
 
     svg.append('g')
@@ -147,7 +154,7 @@ function addDots(svg, data, x, y, color_data, x2_present=false) {
     .append("path") 
     .attr("transform", function (d) {
         if (x2_present) {
-            return "translate(" + x(d.x1) + "," + y(d.x2) + ") rotate(45)";
+            return "translate(" + x(d.x1) + "," + y(d.x2) + ")";
         }
         return "translate(" + x(d.x) + "," + y(d.y) + ") rotate(45)";
     })
@@ -155,7 +162,7 @@ function addDots(svg, data, x, y, color_data, x2_present=false) {
         if (d.marker === undefined || d.marker === 'o') {
             return circleGenerator();
         } else if (d.marker === 'x') {
-            return crossGenerator(); 
+            return squareGenerator(); 
         }
     })
     .style("fill", function(d) {

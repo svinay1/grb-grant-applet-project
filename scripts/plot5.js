@@ -114,9 +114,13 @@ function plot5() {
     const predictY = (x1, x2) => 100 / (1 + Math.exp(-(c2 * x2 + c1 * x1 + b)));
 
     drawPlane(scene, c2, c1, b, 10, color_estimate, true);
-    drawDecisionBoundary(scene, c2, c1, b, 10, 'red');
+    drawDecisionBoundary3D(scene, c2, c1, b, 10, 'red');
 
     let { data, accuracy } = getAccuracy(predictY, initialData);
+
+    // Redraw the points according to their new shapes.
+    scene.selectAll(".data-points").remove();
+    drawPoints(scene, data, true);
     
     // Min and max x and y
     let xmin = -5, xmax = 5
@@ -130,8 +134,10 @@ function plot5() {
     // Grid lines
     drawGridlines(7, 9, width, height, color_grid);
 
-    // Draw the decision boundary
-    drawHorizontalLine(svg, x1, x2, 0, 'red');
+    // Draw decision boundary line
+    if (c2 != 0) {
+        drawDecisionBoundary2D(svg, x1, x2, c1, c2, b, 'red');
+    }
 
     // Add 2D dots
     addDots(svg, data, x1, x2, color_data, true);
@@ -149,8 +155,8 @@ function plot5() {
 
     // Legend entries
     addLegendEntry('#myplot1', "y=1; pred=1", "circle", 'orange', 200, -200);
-    addLegendEntry('#myplot1', "y=1; pred=0", "x", 'orange', 200, -200);
-    addLegendEntry('#myplot1', "y=0; pred=0", "x", 'blue', 200, -200);
+    addLegendEntry('#myplot1', "y=1; pred=0", "square", 'orange', 200, -200);
+    addLegendEntry('#myplot1', "y=0; pred=0", "square", 'blue', 200, -200);
     addLegendEntry('#myplot1', "y=0; pred=1", "circle", 'blue', 200, -200);
 
     // Find the solution to the regression

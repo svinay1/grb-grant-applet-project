@@ -96,6 +96,7 @@ function drawPlane(scene, c2, c1, b, planeSize, color, logistic=false) {
     const vertices = [];
     const faces = [];
     const step = planeSize / (pointsPerSide - 1);
+    const colors = [];
 
     // Build the plane vertices using 20 points per side.
     for (let i = 0; i < pointsPerSide; i++) {
@@ -108,6 +109,11 @@ function drawPlane(scene, c2, c1, b, planeSize, color, logistic=false) {
                 y_val = (y_val / 10) - 5;
             }
             vertices.push(`${x_val} ${y_val} ${z_val}`);
+            const t = (y_val + 5) / 10;
+            const r = t;
+            const g = t;
+            const bCol = 1 - t;
+            colors.push(`${r} ${g} ${bCol}`);
         }
     }
 
@@ -138,6 +144,7 @@ function drawPlane(scene, c2, c1, b, planeSize, color, logistic=false) {
         .attr("coordIndex", faces.join(' '));
 
     faceSet.append("Coordinate").attr("point", vertices.join(' '));
+    faceSet.append("Color").attr("color", colors.join(' '));
 }
 
 function drawResiduals(scene, data, c2, c1, b) {
@@ -182,7 +189,7 @@ function calcError3D(data, predictY) {
     return error;
 }
 
-function drawDecisionBoundary(scene, c2, c1, b, sceneSize, color) {
+function drawDecisionBoundary3D(scene, c2, c1, b, sceneSize, color) {
     scene.select(".decision-boundary-group").remove();
 
     const x1_min = -sceneSize / 2;
