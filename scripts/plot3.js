@@ -30,7 +30,7 @@ const plot3 = (function() {
 
         // Prevents points from being redrawn.
         if (!isSceneInitialized) {
-            scene = d3.select("#myplot scene");
+            scene = d3.select("#myplot2 scene");
             
             const scene_size = 10;
             const num_grid_lines = 21;

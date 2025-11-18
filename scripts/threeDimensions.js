@@ -60,19 +60,29 @@ function drawAxis(scene, color, label, start, end, labelPos) {
 function drawPoints(scene, data) {
     const dataGroup = scene.append("Group").attr("class", "data-points");
     // Format the points themselves.
-    dataGroup.selectAll("Transform")
+    const shapes = dataGroup.selectAll("Transform")
         .data(data)
         .enter()
         .append("Transform")
         .attr("translation", d => `${d.x1} ${d.y} ${d.x2}`)
         .append("Shape")
-        .append("Appearance")
-        .append("Material")
-        .attr("diffuseColor", "#3070B7");
 
-    dataGroup.selectAll("Shape")
-        .append("Sphere")
-        .attr("radius", "0.15");
+    
+    shapes.append("Appearance")
+        .append("Material")
+        .attr("diffuseColor", d => d.color);
+
+    shapes.each(function(d) {
+        const shape = d3.select(this); 
+        console.log(d);
+        if (d.marker === undefined || d.marker === 'o') {
+            shape.append("Sphere")
+                 .attr("radius", "0.15");
+        } else if (d.marker === 'x') {
+            shape.append("Box")
+                 .attr("size", "0.2 0.2 0.2"); 
+        }
+    });
 }
 
 function drawPlane(scene, c2, c1, b, planeSize, color) {
