@@ -1,10 +1,11 @@
 function generateUniformData(xmax, xmin, totalPoints) {
     const data = [];
     const rand = d3.randomLcg(42);
+    const norm = d3.randomNormal.source(rand)(0, 1);
     for (let i = 0; i < totalPoints; i++) {
-        const x = rand() * (xmax - xmin) + xmin;
-        const y = (x - 2.08) ** 2 - rand();
-        data.push({ x: x, y: y });
+        const x = (norm() / 6 + 0.5) * (xmax - xmin) + xmin;
+        const y = Math.sin(x) + norm() * 0.2;
+        data.push({ x, y });
     }
     return data;
 }
@@ -12,8 +13,6 @@ function generateUniformData(xmax, xmin, totalPoints) {
 function plot6() {
     // Colors used in plot
     let color_data = "#3070B7";
-    let color_estimate = "#377e22";
-    let color_residuals = "red";
     let color_grid = "#d9c7d7";
 
     // Font
@@ -31,20 +30,20 @@ function plot6() {
     var svg = appendSvg("#myplot", width, height, margin);
             
     // Get the data
-    const data = generateUniformData(0, 6, 100);
+    let data = generateUniformData(0, 2 * Math.PI, 1000);
 
     // Get k and n from variables drawn from text fields
     let k = parseFloat(document.getElementById('kBox').value) || 0;
     let n = parseFloat(document.getElementById('nBox').value) || 0;
 
-    // Set the function.
-    //const predictPolynomial = x => c2 * (x ** 2) + c1 * x + b;
-
     // Min and max x and y
-    let { xmin, xmax, ymin, ymax } = getMinMax(data, predictPolynomial);
+    let xmin = -0.1 * (2 * Math.PI);
+    let xmax =  1.1 * (2 * Math.PI);
+    let ymin = -1.5;
+    let ymax = 1.5;
 
     // Add x axis
-    let x = addXAxis(svg, xmin, xmax, width, height);
+    let x = addXAxis(svg, xmin, xmax, width, height);       
 
     // Add y axis
     let y = addYAxis(svg, ymin, ymax, width, height);
@@ -53,14 +52,15 @@ function plot6() {
     // Line strokes: https://observablehq.com/@onoratod/animate-a-path-in-d3
     drawGridlines(7, 9, width, height, color_grid);
 
-    // Draw line for estimate
-    //drawEstimateLine(svg, x, y, xmin, xmax, predictPolynomial, color_estimate);
-
     // Add dots
+    data = data.slice(0, n);
     addDots(svg, data, x, y, color_data);
-    
+
+    // Draw curve
+    drawKnnCurve(svg, data, k, x, y, xmin, xmax);
+
     // Title
-    addTitle(`1-D K-nearest neighbors regression with n = ${n}, k = ${c1}`, '#myplot', '0px');
+    addTitle(`1-D K-nearest neighbors regression with n = ${n}, k = ${k}`, '#myplot', '0px');
 
     // y label
     addYLabel(svg, font, height, -margin.left/2, "Y values");
@@ -73,10 +73,7 @@ function plot6() {
     // Data entry
     addLegendEntry('#myplot', "Data", "circle", color_data, 150, -400);
 
-    // Residuals entry
-    addLegendEntry('#myplot', "Residuals", "line", color_residuals, 150, -400);
-
-    // Estimate entry
-    addLegendEntry('#myplot', "Estimate c\u2082x\u00B2 + c\u2081x + b", "line", color_estimate, 150, -400);
+    // Learned entry
+    addLegendEntry('#myplot', "Learned f", "line", "orange", 150, -400);
 
 }

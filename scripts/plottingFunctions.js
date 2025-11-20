@@ -38,10 +38,10 @@ function addTitle(text) {
     target.node().parentNode.insertBefore(titleElement, target.node());
 }
 
-function addLegendEntry(label, type, color, posTop, posRight) {
+function addLegendEntry(plot, label, type, color, posTop, posRight) {
     let legend = d3.select("#legend");
     if (legend.empty()) {
-        const plotElement = d3.select('#myplot').node();
+        const plotElement = d3.select(plot).node();
         if (!plotElement) {
             console.error("Plot element not found:", plotId);
             return;

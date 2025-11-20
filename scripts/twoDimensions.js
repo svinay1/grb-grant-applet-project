@@ -120,6 +120,31 @@ function addDots(svg, data, x, y, color_data) {
     });
 }
 
+function drawKnnCurve(svg, data, k, xScale, yScale, xmin, xmax) {
+    const xtemp = d3.range(xmin, xmax, (xmax - xmin) / 300);
+    const ytemp = xtemp.map(x0 => {
+        const distances = data.map(d => ({
+            d2: (x0 - d.x) ** 2,
+            y: d.y
+        }));
+
+        distances.sort((a, b) => a.d2 - b.d2);
+        const closest = distances.slice(0, k);
+
+        return { x: x0, y: d3.mean(closest, d => d.y) };
+    });
+
+    svg.append("path")
+        .datum(ytemp)
+        .attr("fill", "none")
+        .attr("stroke", "orange")
+        .attr("stroke-width", 3)
+        .attr("d", d3.line()
+            .x(d => xScale(d.x))
+            .y(d => yScale(d.y))
+        );
+}
+
 function calcError(data, predictY) {
     // Calculate the error (predictY is the regression function)
     let error = 0;
