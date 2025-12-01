@@ -13,7 +13,7 @@ function generateUniformData(totalPoints) {
             data.push({x1: x1, x2: x2, y: 100}); 
         }
     }
-    return data; // Return only the data
+    return data; 
 }
 
 function getAccuracy(predictY, initialData) {
