@@ -8,6 +8,7 @@ function plot1() {
     // Font
     let font = 'Arial';
 
+    d3.select("#legend").remove();
     removePlot("#myplot");
     
     // Set the dimensions and margins of the graph
@@ -50,35 +51,28 @@ function plot1() {
         drawEstimateLine(svg, x, y, xmin, xmax, predictLinear, color_estimate);
 
         // Add dots
-        addDots(svg, data, x, y, color_data, "circle");
+        addDots(svg, data, x, y, color_data);
         
         // Calculate error
         let error = calcError(data, predictLinear);
 
         // Title
-        addTitle(font, `Simple Linear Regression: m = ${m.toFixed(2)}, b = ${b.toFixed(2)}, total error = ${error.toFixed(2)}`);
+        addTitle(`Simple Linear Regression: m = ${m.toFixed(2)}, b = ${b.toFixed(2)}, total error = ${error.toFixed(2)}`, '#myplot', '0px');
 
         // Y label
-        addYLabel(svg, font, height, margin, "Y values");
+        addYLabel(svg, font, height, -margin.left/2, "Y values");
 
         // X label
         addXLabel(svg, font, width, height, margin, "X values");
 
-        // Legend
-        let center = height/2;
-        let spacing = 20;
-        let circle_radius = 6;
-        let icon_width = 24;
-        let legendX = width + 20;
-
         // Data entry
-        addLegendEntry(svg, "circle", legendX, center - spacing, color_data, "Data", font, icon_width, circle_radius);
+        addLegendEntry('#myplot', "Data", "circle", color_data, 150, -400);
 
         // Residuals entry
-        addLegendEntry(svg, "rect", legendX, center, color_residuals, "Residuals", font, icon_width, circle_radius);
+        addLegendEntry('#myplot', "Residuals", "line", color_residuals, 150, -400);
 
         // Estimate entry
-        addLegendEntry(svg, "rect", legendX, center + spacing, color_estimate, "Estimate mx+b", font, icon_width, circle_radius);
+        addLegendEntry('#myplot', "Estimate mx + b", "line", color_estimate, 150, -400);
 
         // Find the solution to the regression
         function solveRegression() {

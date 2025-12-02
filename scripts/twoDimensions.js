@@ -65,6 +65,56 @@ function drawResiduals(svg, data, color_residuals, x, y, predictY) {
         .attr("class", "error");
 }
 
+function drawDecisionBoundary2D(svg, x_scale, y_scale, c1, c2, b, color) {
+    // Note the boundaries of the plot
+    const x_range = x_scale.range();
+    let x_left = x_scale.invert(x_range[0]); 
+    let x_right = x_scale.invert(x_range[1]);    
+
+    let y_left = -(c1 / c2) * x_left - (b / c2);
+    let y_right = -(c1 / c2) * x_right - (b / c2);
+
+    x_left = x_scale(x_left);
+    x_right = x_scale(x_right);
+    y_left = y_scale(y_left);
+    y_right = y_scale(y_right);
+
+    // Draw the horizontal line
+    svg.append("line")
+        .attr("x1", x_left)
+        .attr("y1", y_left) 
+        .attr("x2", x_right)
+        .attr("y2", y_right)     
+        .attr("stroke", color)
+        .attr("stroke-width", 2)
+        .attr("stroke-dasharray", "6, 4")
+        .attr("stroke-opacity", 0.6);
+}
+
+function drawVerticalLine(svg, x_scale, y_scale, x_value, color) {
+    // Note the boundaries of the plot
+    const x_coord = x_scale(x_value);
+    const y_range = y_scale.range();
+    const y_bottom = y_range[0]; 
+    const y_top = y_range[1];    
+
+    // Draw the vertical line
+    svg.append("line")
+        .attr("x1", x_coord)
+        .attr("y1", y_bottom) 
+        .attr("x2", x_coord)
+        .attr("y2", y_top)     
+        .attr("stroke", color)
+        .attr("stroke-width", 2)
+        .attr("stroke-dasharray", "6, 4")
+        .attr("stroke-opacity", 0.6);
+
+    // Draw the triangle
+    svg.append("polygon")
+        .attr("points", `${x_coord - 7}, ${y_bottom} ${x_coord + 7}, ${y_bottom} ${x_coord}, ${y_bottom - 15}`)
+        .attr("fill", "red");
+}
+
 function drawEstimateLine(svg, x, y, xmin, xmax, predictY, color_estimate, numPoints = 100) {
     // Multiple points to draw line/curve
     const lineData = [];
@@ -87,14 +137,14 @@ function drawEstimateLine(svg, x, y, xmin, xmax, predictY, color_estimate, numPo
         );
 }
 
-function addDots(svg, data, x, y, color_data) {
+function addDots(svg, data, x, y, color_data, x2_present=false) {
     // Add dots to the plot
     const circleGenerator = d3.symbol()
         .type(d3.symbolCircle)
         .size(60); 
 
-    const crossGenerator = d3.symbol()
-        .type(d3.symbolCross)
+    const squareGenerator = d3.symbol()
+        .type(d3.symbolSquare)
         .size(60);
 
     svg.append('g')
@@ -103,13 +153,16 @@ function addDots(svg, data, x, y, color_data) {
     .enter()
     .append("path") 
     .attr("transform", function (d) {
+        if (x2_present) {
+            return "translate(" + x(d.x1) + "," + y(d.x2) + ")";
+        }
         return "translate(" + x(d.x) + "," + y(d.y) + ") rotate(45)";
     })
     .attr("d", function(d) {
         if (d.marker === undefined || d.marker === 'o') {
             return circleGenerator();
         } else if (d.marker === 'x') {
-            return crossGenerator(); 
+            return squareGenerator(); 
         }
     })
     .style("fill", function(d) {
@@ -213,4 +266,24 @@ function addYAxis(svg, ymin, ymax, width, height) {
         .attr("transform", `translate(${width},0)`);
 
     return y;
+}
+
+function addYAxisLabels(svg, ymin, ymax, width, height) {
+    // Add right-side label at bottom
+    svg.append("text")
+        .attr("x", width + 10) 
+        .attr("y", ymin + height + 3)   
+        .text("0")
+        .style("font-size", "12px")
+        .attr("fill", "black")
+        .attr("text-anchor", "start"); 
+
+    // Add right-side label at top
+    svg.append("text")
+        .attr("x", width + 10) 
+        .attr("y", ymax + 3) 
+        .text("1")
+        .style("font-size", "12px")
+        .attr("fill", "black")
+        .attr("text-anchor", "start"); 
 }

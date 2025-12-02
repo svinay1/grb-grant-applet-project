@@ -54,7 +54,7 @@ function plot4() {
     // Append the svg object to the body of the page
     var svg = appendSvg("#myplot", width, height, margin);
             
-    // Get the data and accuracy
+    // Get the data and accuracyx
     let initialData = generateUniformData(50);
 
     // Get m and b from variables drawn from text fields
@@ -75,6 +75,7 @@ function plot4() {
 
     // Add y axis
     let y = addYAxis(svg, ymin, ymax, width, height);
+    addYAxisLabels(svg, 0, 1, width + margin.right / 50, height);
 
     // Grid lines
     // Line strokes: https://observablehq.com/@onoratod/animate-a-path-in-d3
@@ -83,11 +84,17 @@ function plot4() {
     // Draw line for estimate
     drawEstimateLine(svg, x, y, xmin, xmax, predictY, color_estimate);
 
+    // Draw decision boundary line
+    if (m != 0 && (-b / m) >= -5 && (-b / m) <= 5) {
+        const decision_boundary = -b / m;
+        drawVerticalLine(svg, x, y, decision_boundary, 'red');
+    }
+
     // Add dots
     addDots(svg, data, x, y, color_data);
     
     // Title
-    addTitle(`Doing Logistic Regression Manually: accuracy = ${accuracy.toFixed(1)}%`);
+    addTitle(`Doing Logistic Regression Manually: accuracy = ${accuracy.toFixed(1)}%`, '#myplot', '0px');
 
     // y label
     addYLabel(svg, font, height, -margin.left / 2, "Probability that y=1");
@@ -99,10 +106,10 @@ function plot4() {
     d3.select("#legend").remove();
 
     // Legend entries
-    addLegendEntry("y=1; pred=1", "circle", 'orange', 150, -400);
-    addLegendEntry("y=1; pred=0", "x", 'orange', 150, -400);
-    addLegendEntry("y=0; pred=0", "x", 'blue', 150, -400);
-    addLegendEntry("y=0; pred=1", "circle", 'blue', 150, -400);
+    addLegendEntry('#myplot', "y=1; pred=1", "circle", 'orange', 150, -400);
+    addLegendEntry('#myplot', "y=1; pred=0", "x", 'orange', 150, -400);
+    addLegendEntry('#myplot', "y=0; pred=0", "x", 'blue', 150, -400);
+    addLegendEntry('#myplot', "y=0; pred=1", "circle", 'blue', 150, -400);
 
     // Find the solution to the regression
     function solveRegression() {

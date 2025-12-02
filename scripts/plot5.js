@@ -1,15 +1,18 @@
-function generateUniformData(totalPoints) {
+function generateData(totalPoints) {
     const rand = d3.randomLcg(42);
     const data = [];
 
+    const randMinus = d3.randomNormal.source(rand)(-2, 1);
+    const randPlus = d3.randomNormal.source(rand)(0.5, 1);
+
     for (let i = 0; i < totalPoints; i++) {
         if (i < totalPoints / 2) {
-            const x1 = (rand() - 0.5) * 4 - 2;
-            const x2 = (rand() - 0.5) * 4 - 2;
+            const x1 = randMinus();
+            const x2 = randMinus();
             data.push({x1: x1, x2: x2, y: 0}); 
         } else {
-            const x1 = (rand() - 0.5) * 4 + 0.5;
-            const x2 = (rand() - 0.5) * 4 + 0.5;
+            const x1 = randPlus();
+            const x2 = randPlus();
             data.push({x1: x1, x2: x2, y: 100}); 
         }
     }
@@ -18,11 +21,15 @@ function generateUniformData(totalPoints) {
 
 function getAccuracy(predictY, initialData) {
     let correctCount = 0;
-    initialData.forEach(d => {
-        const pred_prob = predictY(d.x1, d.x2);
-        const pred_class = pred_prob > 50; 
-        const true_class = d.y > 50;      
+    const data = initialData.map(d => ({...d})); 
 
+    data.forEach(d => {
+        const pred_prob = predictY(d.x1, d.x2); 
+        d.y_pred = (pred_prob / 10) - 5; 
+
+        const pred_class = pred_prob > 50; 
+        const true_class = d.y > 50; 
+        
         if (pred_class === true_class) {
             correctCount++;
             d.marker = 'o'; 
@@ -32,38 +39,36 @@ function getAccuracy(predictY, initialData) {
         d.color = (true_class) ? 'orange' : 'blue'; 
     });
     
-    const accuracy = (correctCount / initialData.length) * 100;
-    return { data: initialData, accuracy: accuracy }
+    const accuracy = (correctCount / data.length) * 100;
+    return { data: data, accuracy: accuracy }
 }
+
+// Variables to ensure that scene is only generated once.
+let isSceneInitialized = false;
+let scene; 
+let initialData;
 
 function plot5() {
     // Colors used in plot
     let color_data = "#3070B7";
     let color_grid = "#d9c7d7";
+    let color_estimate = "#377e22";
 
     // Font
     let font = 'Arial';
 
     removePlot("#myplot1");
-    //d3.select("#myplot2").html("");
     
     // Set the dimensions and margins of the graph
     var margin = {top: 60, right: 220, bottom: 80, left: 100},
                 width = 800 - margin.left - margin.right,
                 height = 450 - margin.top - margin.bottom;
                 
-    
     // Append the svg object to the body of the page
     var svg = appendSvg("#myplot1", width, height, margin);
-            
-    // Variables to ensure that scene is only generated once.
-    let isSceneInitialized = false;
-    let scene; 
-    let initialData;
 
     // Contains the code that only needs to be generated once.
     function renderPlot() {
-        // Prevents points from being redrawn.
         if (!isSceneInitialized) {
             scene = d3.select("#myplot2 scene");
             
@@ -72,20 +77,28 @@ function plot5() {
             const color_grid = "#E0E0E0";
             
             // Generate the data.
-            initialData = generateUniformData(50);
+            initialData = generateData(50);
             
-            // Draw the grid.
             drawGrid(scene, scene_size, num_grid_lines, color_grid);
 
-            // Draw the axes.
-            const axisLength = scene_size / 2
-            drawAxis(scene, 'black', 'x1', [-axisLength, 0, 0], [axisLength, 0, 0], [axisLength + 0.8, 0, 0])
-            drawAxis(scene, 'black', 'x2', [0, 0, -axisLength], [0, 0, axisLength], [0, 0, axisLength + 0.8])
-            drawAxis(scene, 'black', 'y', [0, -axisLength, 0], [0, axisLength, 0], [0, axisLength + 0.8, 0])
+            // Draw the axes
+            const axisLength = scene_size / 2;
+            drawAxis(scene, 'black', 'x1', [-axisLength, 0, 0], [axisLength, 0, 0], [axisLength + 0.8, 0, 0]);
+            drawAxis(scene, 'black', 'x2', [0, 0, -axisLength], [0, 0, axisLength], [0, 0, axisLength + 0.8]);
+            drawAxis(scene, 'black', 'y', [0, -axisLength, 0], [0, axisLength, 0], [0, axisLength + 0.8, 0]);
 
-            // Add in the data points.
-            drawPoints(scene, initialData); 
+            // Draw the 3D title
+            addTitle(`Surface Plot showing f(x)`, '#myplot2');
+
+            let c2_init = parseFloat(document.getElementById('c2Box').value) || 0;
+            let c1_init = parseFloat(document.getElementById('c1Box').value) || 0;
+            let b_init = parseFloat(document.getElementById('bBox').value) || 0;
+            const predictY_init = (x1, x2) => 100 / (1 + Math.exp(-(c2_init * x2 + c1_init * x1 + b_init)));
             
+            let { data, _ } = getAccuracy(predictY_init, initialData);
+            
+            drawPoints(scene, data, true); 
+
             isSceneInitialized = true;
         }
     }
@@ -100,14 +113,17 @@ function plot5() {
     // Set the function.
     const predictY = (x1, x2) => 100 / (1 + Math.exp(-(c2 * x2 + c1 * x1 + b)));
 
-    // Draw the plane 
-    drawPlane(scene, c2, c1, b, 10, '#377e22', true);
+    drawPlane(scene, c2, c1, b, 10, color_estimate, true);
+    drawDecisionBoundary3D(scene, c2, c1, b, 10, 'red');
 
-    // Get finalized data and accuracy.
     let { data, accuracy } = getAccuracy(predictY, initialData);
 
+    // Redraw the points according to their new shapes.
+    scene.selectAll(".data-points").remove();
+    drawPoints(scene, data, true);
+    
     // Min and max x and y
-    let xmin = -5, xmax = 5, ymin = 0, ymax = 100;
+    let xmin = -5, xmax = 5
 
     // Add x axis
     let x1 = addXAxis(svg, xmin, xmax, width, height);
@@ -116,15 +132,18 @@ function plot5() {
     let x2 = addYAxis(svg, xmin, xmax, width, height);
 
     // Grid lines
-    // Line strokes: https://observablehq.com/@onoratod/animate-a-path-in-d3
     drawGridlines(7, 9, width, height, color_grid);
 
-    // Add dots
+    // Draw decision boundary line
+    if (c2 != 0) {
+        drawDecisionBoundary2D(svg, x1, x2, c1, c2, b, 'red');
+    }
+
+    // Add 2D dots
     addDots(svg, data, x1, x2, color_data, true);
     
-    // Title
-    addTitle(`Doing Logistic Regression Manually: accuracy = ${accuracy.toFixed(1)}%`, '#myplot1', '0px');
-    addTitle(`Surface Plot showing f(x)`, '#myplot2', '50px');
+    // Redraw 2D title
+    addTitle(`Doing Logistic Regression Manually: accuracy = ${accuracy.toFixed(1)}%`, '#myplot1');
 
     // y label
     addYLabel(svg, font, height, -margin.left / 2, "x2");
@@ -136,8 +155,8 @@ function plot5() {
 
     // Legend entries
     addLegendEntry('#myplot1', "y=1; pred=1", "circle", 'orange', 200, -200);
-    addLegendEntry('#myplot1', "y=1; pred=0", "x", 'orange', 200, -200);
-    addLegendEntry('#myplot1', "y=0; pred=0", "x", 'blue', 200, -200);
+    addLegendEntry('#myplot1', "y=1; pred=0", "square", 'orange', 200, -200);
+    addLegendEntry('#myplot1', "y=0; pred=0", "square", 'blue', 200, -200);
     addLegendEntry('#myplot1', "y=0; pred=1", "circle", 'blue', 200, -200);
 
     // Find the solution to the regression
