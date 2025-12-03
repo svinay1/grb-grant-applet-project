@@ -11,18 +11,13 @@ function generateData(totalPoints) {
     return data;
 }
 
-// Variables to ensure that scene is only generated once.
+// Variables to ensure that scenes are only generated once.
 let isSceneInitialized = false;
-let scene; 
-let data;
+let scene1;
+let scene2; 
 
 function plot7() {
-    // Colors used in plot
     let color_data = "#3070B7";
-    let color_grid = "#d9c7d7";
-
-    // Font
-    let font = 'Arial';
 
     removePlot("#myplot");
     
@@ -35,31 +30,33 @@ function plot7() {
     // Contains the code that only needs to be generated once.
     function renderPlot() {
         if (!isSceneInitialized) {
-            scene = d3.select("#myplot2 scene");
+            scene1 = d3.select("#myplot1 scene");
+            scene2 = d3.select("#myplot2 scene");
             
             const scene_size = 10;
             const num_grid_lines = 21;
             const color_grid = "#E0E0E0";
             
-            // Get the data
-            data = generateData(1000);
-            
-            drawGrid(scene, scene_size, num_grid_lines, color_grid);
-
-            // Draw the axes
             const axisLength = scene_size / 2;
-            drawAxis(scene, 'black', 'x1', [-axisLength, 0, 0], [axisLength, 0, 0], [axisLength + 0.8, 0, 0]);
-            drawAxis(scene, 'black', 'x2', [0, 0, -axisLength], [0, 0, axisLength], [0, 0, axisLength + 0.8]);
-            drawAxis(scene, 'black', 'y', [0, -axisLength, 0], [0, axisLength, 0], [0, axisLength + 0.8, 0]);
 
-            // Draw the 3D title
-            addTitle(`Ground truth function`, '#myplot2');
+            // Draw the grid for scene 2
+            drawGrid(scene1, scene_size, num_grid_lines, color_grid);
+            
+            // Draw the axes for scene 1
+            drawAxis(scene1, 'black', 'x1', [-axisLength, 0, 0], [axisLength, 0, 0], [axisLength + 0.8, 0, 0]);
+            drawAxis(scene1, 'black', 'x2', [0, 0, -axisLength], [0, 0, axisLength], [0, 0, axisLength + 0.8]);
+            drawAxis(scene1, 'black', 'y', [0, -axisLength, 0], [0, axisLength, 0], [0, axisLength + 0.8, 0]);
 
-            // Get k and n from variables drawn from text fields
-            let k = parseFloat(document.getElementById('kBox').value) || 0;
-            let n = parseFloat(document.getElementById('nBox').value) || 0;
-                        
-            drawPoints(scene, data, true); 
+            // Draw the grid for scene 2
+            drawGrid(scene2, scene_size, num_grid_lines, color_grid);
+
+            // Draw the axes for scene 2
+            drawAxis(scene2, 'black', 'x1', [-axisLength, 0, 0], [axisLength, 0, 0], [axisLength + 0.8, 0, 0]);
+            drawAxis(scene2, 'black', 'x2', [0, 0, -axisLength], [0, 0, axisLength], [0, 0, axisLength + 0.8]);
+            drawAxis(scene2, 'black', 'y', [0, -axisLength, 0], [0, axisLength, 0], [0, axisLength + 0.8, 0]);
+
+            // Draw the plane in the second plot
+            drawPlane(scene2, 0, 0, 0, 10, '#377e22', false, true);
 
             isSceneInitialized = true;
         }
@@ -67,18 +64,23 @@ function plot7() {
 
     renderPlot();
 
-    // Min and max x1, x2, and y
-    let x1min = -3;
-    let x1max =  3;
-    let x2min = -3;
-    let x2max =  3;
-    let ymin = -1.5;
-    let ymax = 1.5;
+    // Get k and n from variables drawn from text fields
+    let k = parseFloat(document.getElementById('kBox').value) || 0;
+    let n = parseFloat(document.getElementById('nBox').value) || 0;
 
-    // Set the function.
-    const predictFunction = (x1, x2) => Math.sin(x1/2) + Math.sin(x2/2);
+    // Get the data
+    data = generateData(n);
 
-    // Draw the plane and residuals
-    drawPlane(scene, 0, 0, 0, 6, '#377e22', knn=true);
+    // Add the titles
+    addTitle(`2-D K-nearest neighbors regression with n = ${n}, k = ${k}`, '#myplot1');
+    addTitle(`Ground truth function`, '#myplot2');
 
+    // Draw points on the first plot
+    drawPoints(scene1, data); 
+
+    // Draw the KNN plane connecting the points
+    drawKnnPlane(scene1, data, k, -3, 3);
+
+    // Add legend entry
+    addLegendEntry('#myplot1', "Data", "circle", color_data, 150, -200);
 }

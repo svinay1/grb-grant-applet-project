@@ -1,3 +1,25 @@
+function drawAxisLabel(scene, text, position) {
+    const labelGroup = scene.append("Transform")
+        .attr("translation", position.join(' '));
+
+    const billboard = labelGroup.append("Billboard")
+        .attr("axisOfRotation", "0 0 0"); 
+
+    const shape = billboard.append("Shape");
+
+    shape.append("Appearance")
+        .append("Material")
+        .attr("diffuseColor",  "0 0 0")
+        .attr("emissiveColor",  "0 0 0"); 
+
+    shape.append("Text")
+        .attr("string", `"${text}"`) 
+        .append("FontStyle")
+        .attr("family", '"SANS"')
+        .attr("size", "0.6")        
+        .attr("justify", '"MIDDLE" "MIDDLE"'); 
+}
+
 function drawGrid(scene, gridSize, numLines, color) {
     // Define grid and step sizes.
     const gridLines = [];
@@ -92,13 +114,13 @@ function drawPoints(scene, data, logistic=false) {
 
 function drawPlane(scene, c2, c1, b, planeSize, color, logistic=false, knn=false) {
     scene.select("Shape.regression-plane").remove();
-    const pointsPerSide = 20;
+    const pointsPerSide = knn ? 50 : 20; 
     const vertices = [];
     const faces = [];
     const step = planeSize / (pointsPerSide - 1);
     const colors = [];
 
-    // Build the plane vertices using 20 points per side.
+    // Build the plane vertices using 20 points per side
     for (let i = 0; i < pointsPerSide; i++) {
         for (let j = 0; j < pointsPerSide; j++) {
             let x_val = -(planeSize / 2) + j * step;
@@ -116,6 +138,7 @@ function drawPlane(scene, c2, c1, b, planeSize, color, logistic=false, knn=false
             if (knn) {
                 t = (y_val + 2) / 4;
             }
+            t = Math.max(0, Math.min(1, t));
             const r = t;
             const g = t;
             const bCol = 1 - t;
@@ -123,7 +146,7 @@ function drawPlane(scene, c2, c1, b, planeSize, color, logistic=false, knn=false
         }
     }
 
-     // Build the plane faces using 20 points per side.
+     // Build the plane faces using 20 points per side
     for (let i = 0; i < pointsPerSide - 1; i++) {
         for (let j = 0; j < pointsPerSide - 1; j++) {
             let p1 = i * pointsPerSide + j;
@@ -134,11 +157,11 @@ function drawPlane(scene, c2, c1, b, planeSize, color, logistic=false, knn=false
         }
     }
 
-    // Format the plane.
+    // Format the plane
     const planeShape = scene.append("Shape")
         .attr("class", "regression-plane");
 
-    // Make sure the plane has the inputted color.
+    // Set the plane colors
     planeShape.append("Appearance")
         .append("Material")
         .attr("diffuseColor", color) 
@@ -249,3 +272,68 @@ function drawDecisionBoundary3D(scene, c2, c1, b, sceneSize, color) {
         .attr("radius", "0.03");
 }
 
+function drawKnnPlane(scene, data, k, minimum, maximum) {
+    scene.select(".knn-surface").remove();
+
+    const resolution = 40; 
+    const step = (maximum - minimum) / (resolution - 1);
+    
+    const vertices = [];
+    const faces = [];
+    const colors = [];
+
+    for (let i = 0; i < resolution; i++) {
+        for (let j = 0; j < resolution; j++) {
+            let grid_x1 = minimum + j * step;
+            let grid_x2 = minimum + i * step;
+
+            const distances = data.map(d => ({
+                distSq: (grid_x1 - d.x1) ** 2 + (grid_x2 - d.x2) ** 2,
+                y: d.y
+            }));
+
+            distances.sort((a, b) => a.distSq - b.distSq);
+            const neighbors = distances.slice(0, k);
+
+            const predicted_y = d3.mean(neighbors, d => d.y);
+            vertices.push(`${grid_x1} ${predicted_y} ${grid_x2}`);
+
+            let t = (predicted_y + 2) / 4;
+            t = Math.max(0, Math.min(1, t));
+
+            const r = t;
+            const g = t;
+            const bCol = 1 - t;
+            colors.push(`${r} ${g} ${bCol}`);
+        }
+    }
+
+    for (let i = 0; i < resolution - 1; i++) {
+        for (let j = 0; j < resolution - 1; j++) {
+            let p1 = i * resolution + j;
+            let p2 = i * resolution + j + 1;
+            let p3 = (i + 1) * resolution + j + 1;
+            let p4 = (i + 1) * resolution + j;
+            
+            faces.push(`${p1} ${p2} ${p3} ${p4} -1`);
+        }
+    }
+
+    const shape = scene.append("Shape")
+        .attr("class", "knn-surface");
+
+    shape.append("Appearance")
+        .append("Material")
+        .attr("transparency", "0.2");
+
+    const faceShape = shape.append("IndexedFaceSet")
+        .attr("solid", "false") 
+        .attr("colorPerVertex", "true") 
+        .attr("coordIndex", faces.join(' '));
+
+    faceShape.append("Coordinate")
+        .attr("point", vertices.join(' '));
+        
+    faceShape.append("Color")
+        .attr("color", colors.join(' '));
+}
