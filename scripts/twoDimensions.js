@@ -287,3 +287,69 @@ function addYAxisLabels(svg, ymin, ymax, width, height) {
         .attr("fill", "black")
         .attr("text-anchor", "start"); 
 }
+
+function drawColorBar(idSuffix, min, max, top, left, title) {
+    d3.select(`.colorbar-${idSuffix}`).remove();
+
+    const width = 100;
+    const height = 200;
+    const margin = { left: 40, right: 40, top: 35, bottom: 20 };
+    const barWidth = 20;
+    const barHeight = height - margin.top - margin.bottom;
+
+    const svg = d3.select("body")
+        .append("svg")
+        .attr("class", `colorbar-${idSuffix}`) 
+        .attr("width", width)
+        .attr("height", height)
+        .style("position", "absolute") 
+        .style("top", top + "px")      
+        .style("left", left + "px")    
+        .style("z-index", "1000");
+
+    const defs = svg.append("defs");
+    const linearGradient = defs.append("linearGradient")
+        .attr("id", "gradient-" + idSuffix)
+        .attr("x1", "0%")
+        .attr("y1", "100%") 
+        .attr("x2", "0%")
+        .attr("y2", "0%");
+
+    linearGradient.append("stop")
+        .attr("offset", "0%")
+        .attr("stop-color", "#0000ff")
+        .attr("stop-opacity", "0.3"); 
+
+    linearGradient.append("stop")
+        .attr("offset", "100%")
+        .attr("stop-color", "#ffff00")
+        .attr("stop-opacity", "0.3"); 
+
+    svg.append("rect")
+        .attr("x", margin.left)
+        .attr("y", margin.top)
+        .attr("width", barWidth)
+        .attr("height", barHeight)
+        .style("fill", `url(#gradient-${idSuffix})`)
+        .style("stroke", "#ccc");
+
+    svg.append("text")
+        .attr("x", margin.left + barWidth / 2)
+        .attr("y", margin.top - 10)            
+        .attr("text-anchor", "middle")         
+        .style("font-family", "Arial, sans-serif")
+        .style("font-size", "14px")
+        .style("font-weight", "bold")
+        .text(title);
+
+    const yScale = d3.scaleLinear()
+        .domain([min, max])
+        .range([height - margin.bottom, margin.top]); 
+
+    const yAxis = d3.axisRight(yScale)
+        .ticks(5);
+
+    svg.append("g")
+        .attr("transform", `translate(${margin.left + barWidth}, 0)`)
+        .call(yAxis);
+}

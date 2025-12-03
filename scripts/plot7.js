@@ -58,6 +58,12 @@ function plot7() {
             // Draw the plane in the second plot
             drawPlane(scene2, 0, 0, 0, 10, '#377e22', false, true);
 
+            drawColorBar('1', -2, 2, 200, 600, "Learned f");
+            drawColorBar('2', -2, 2, 200, 1200, "Ground Truth");
+
+            // Add legend entry
+            addLegendEntry('#myplot1', "Data", "circle", color_data, 100, -100);
+
             isSceneInitialized = true;
         }
     }
@@ -80,7 +86,4 @@ function plot7() {
 
     // Draw the KNN plane connecting the points
     drawKnnPlane(scene1, data, k, -3, 3);
-
-    // Add legend entry
-    addLegendEntry('#myplot1', "Data", "circle", color_data, 150, -200);
 }
