@@ -82,6 +82,7 @@
     <script src="../scripts/plot3.js"></script>
 </head>
 <body onload="plot3()">
+    <!-- Create the 3D plot -->
     <x3d id="myplot">
         <scene>
             <Viewpoint position="3 10 20" centerOfRotation="0 0 0" orientation="1 0 0 -0.5"></Viewpoint>
@@ -90,6 +91,7 @@
     
     <center>
         <div>
+        <!-- Create the sliders -->
         <form>
             <td>$c_2=$</td>
             <td><input id="c2Slider", type="range", name="c2Slider", size="7", class="slider", 
@@ -112,6 +114,7 @@
                     value="-0.5", step="0.1", min="-5", max="5", oninput="this.form.bSlider.value=this.value; plot3()" /></td>
         </div>
     
+        <!-- Create the solve button -->
         <div><button id="optimal", type="button", name="optimal", class="button2", 
                 onclick="  
                     solveRegression();

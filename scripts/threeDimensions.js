@@ -1,25 +1,3 @@
-function drawAxisLabel(scene, text, position) {
-    const labelGroup = scene.append("Transform")
-        .attr("translation", position.join(' '));
-
-    const billboard = labelGroup.append("Billboard")
-        .attr("axisOfRotation", "0 0 0"); 
-
-    const shape = billboard.append("Shape");
-
-    shape.append("Appearance")
-        .append("Material")
-        .attr("diffuseColor",  "0 0 0")
-        .attr("emissiveColor",  "0 0 0"); 
-
-    shape.append("Text")
-        .attr("string", `"${text}"`) 
-        .append("FontStyle")
-        .attr("family", '"SANS"')
-        .attr("size", "0.6")        
-        .attr("justify", '"MIDDLE" "MIDDLE"'); 
-}
-
 function drawGrid(scene, gridSize, numLines, color) {
     // Define grid and step sizes.
     const gridLines = [];
@@ -100,6 +78,7 @@ function drawPoints(scene, data, logistic=false) {
         .append("Material")
         .attr("diffuseColor", d => d.color || '#3070B7');
 
+    // Change the shape based on the marker
     shapes.each(function(d) {
         const shape = d3.select(this); 
         if (d.marker === undefined || d.marker === 'o') {
@@ -167,6 +146,7 @@ function drawPlane(scene, c2, c1, b, planeSize, color, logistic=false, knn=false
         .attr("diffuseColor", color) 
         .attr("transparency", "0.2"); 
 
+    // Add the color gradient
     const faceSet = planeShape.append("IndexedFaceSet")
         .attr("solid", "false")
         .attr("colorPerVertex", "true")
@@ -221,6 +201,7 @@ function calcError3D(data, predictY) {
 function drawDecisionBoundary3D(scene, c2, c1, b, sceneSize, color) {
     scene.select(".decision-boundary-group").remove();
 
+    // Get the minimum & maximum
     const x1_min = -sceneSize / 2;
     const x1_max = sceneSize / 2;
     const x2_min = -sceneSize / 2;
@@ -229,6 +210,7 @@ function drawDecisionBoundary3D(scene, c2, c1, b, sceneSize, color) {
     let lineStart = [0, 0, 0];
     let lineEnd = [0, 0, 0];
 
+    // Ensure that the denominators do not go too low
     if (Math.abs(c2) > 0.1) {
         let x2_min_res = (-b - c1 * x1_min) / c2;
         let x2_max_res = (-b - c1 * x1_max) / c2;
@@ -246,6 +228,7 @@ function drawDecisionBoundary3D(scene, c2, c1, b, sceneSize, color) {
         return;
     }
 
+    // Format the line
     const vector = [lineEnd[0] - lineStart[0], 0, lineEnd[2] - lineStart[2]];
     const length = Math.sqrt(vector[0] ** 2 + vector[2] ** 2);
     const norm = [vector[0] / length, 0, vector[2] / length];
@@ -263,6 +246,7 @@ function drawDecisionBoundary3D(scene, c2, c1, b, sceneSize, color) {
 
     const shape = transform.append("Shape");
 
+    // Format the appearance of the line
     shape.append("Appearance")
         .append("Material")
         .attr("diffuseColor", color);
@@ -282,11 +266,13 @@ function drawKnnPlane(scene, data, k, minimum, maximum) {
     const faces = [];
     const colors = [];
 
+    // Create the KNN plane grid
     for (let i = 0; i < resolution; i++) {
         for (let j = 0; j < resolution; j++) {
             let grid_x1 = minimum + j * step;
             let grid_x2 = minimum + i * step;
 
+            // Find the nearest neighbors
             const distances = data.map(d => ({
                 distSq: (grid_x1 - d.x1) ** 2 + (grid_x2 - d.x2) ** 2,
                 y: d.y
@@ -301,6 +287,7 @@ function drawKnnPlane(scene, data, k, minimum, maximum) {
             let t = (predicted_y + 2) / 4;
             t = Math.max(0, Math.min(1, t));
 
+            // Push the color gradient
             const r = t;
             const g = t;
             const bCol = 1 - t;
@@ -308,6 +295,7 @@ function drawKnnPlane(scene, data, k, minimum, maximum) {
         }
     }
 
+    // Push the faces of the KNN plane
     for (let i = 0; i < resolution - 1; i++) {
         for (let j = 0; j < resolution - 1; j++) {
             let p1 = i * resolution + j;
@@ -322,6 +310,7 @@ function drawKnnPlane(scene, data, k, minimum, maximum) {
     const shape = scene.append("Shape")
         .attr("class", "knn-surface");
 
+    // Format the plane
     shape.append("Appearance")
         .append("Material")
         .attr("transparency", "0.2");

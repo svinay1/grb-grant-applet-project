@@ -19,12 +19,14 @@ function addTitle(text, plot, space_below="0px") {
     const titleId = plot.substring(1) + "-title"; 
     d3.select("#" + titleId).remove();
 
+    // Select which plot to add the title to.
     const target = d3.select(plot);
     if (target.empty()) {
         console.error("Title target not found:", targetSelector);
         return;
     }
 
+    // Create the title.
     const titleElement = d3.create("h2")
         .attr("id", titleId)
         .style("font-family", "Arial, sans-serif")
@@ -36,6 +38,7 @@ function addTitle(text, plot, space_below="0px") {
         .text(text)
         .node(); 
 
+    // Add the title before the plot.
     target.node().prepend(titleElement);
 }
 
@@ -48,16 +51,19 @@ function addLegendEntry(plot, label, type, color, posTop, posRight) {
             return;
         }
 
+        // Draw a rectangle around the legend
         const plotRect = plotElement.getBoundingClientRect();
 
+        // Get the legend positions
         const legendTop = plotRect.top + posTop; 
         const legendLeft = plotRect.right + posRight; 
 
+        // Add the legend boundary
         legend = d3.select("body").append("div")
             .attr("id", "legend") 
             .style("position", "absolute")
-            .style("top", `${legendTop}px`)      // Set calculated top position
-            .style("left", `${legendLeft}px`)    // Set calculated left position
+            .style("top", `${legendTop}px`)      
+            .style("left", `${legendLeft}px`)    
             .style("background-color", "rgba(255, 255, 255, 0.9)")
             .style("padding", "15px 20px")
             .style("border", "1px solid #000")
@@ -65,6 +71,7 @@ function addLegendEntry(plot, label, type, color, posTop, posRight) {
             .style("font-family", "Arial, sans-serif");
     }
 
+    // Add a legend item
     const legendItem = legend.append("div")
         .attr("class", "legend-item")
         .style("display", "flex")
@@ -80,6 +87,7 @@ function addLegendEntry(plot, label, type, color, posTop, posRight) {
         .style("margin-right", "8px")
         .style("border", "1px solid rgba(0,0,0,0.2)");
 
+    // Different shape scenarios
     if (type === 'circle') {
         icon.style("background-color", color).style("border-radius", "50%");
     } else if (type === 'line') { 

@@ -81,6 +81,7 @@
       <div id="myplot"></div>
         
         <div>
+        <!-- Create the sliders -->
         <form>
             <td>$c_2=$</td>
             <td><input id="c2Slider", type="range", name="c2Slider", size="7", class="slider", 
@@ -103,6 +104,7 @@
                     value="-0.5", step="0.1", min="-5", max="5", oninput="this.form.bSlider.value=this.value; plot2()" /></td>
         </div>
     
+        <!-- Create the solution button -->
         <div><button id="optimal", type="button", name="optimal", class="button2", 
                 onclick="  
                     solveRegression();
