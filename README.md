@@ -42,7 +42,8 @@ This repository contains the code for interactive applets used in Rice Universit
    ```
 
 **To "run" the code:**
-Open the desired HTML file using a browser of your choosing.
+
+open the desired HTML file using a browser of your choosing.
 
 
 
