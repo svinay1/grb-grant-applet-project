@@ -4,7 +4,7 @@
 
 - [Introduction](#introduction)
 - [Repo Structure](#repo-structure)
-- [Setup/Running Instructions](#setup/running-instructions)
+- [Setup and Running Instructions](#setup-and-running-instructions)
 
 ## Introduction
 
@@ -32,7 +32,7 @@ This repository contains the code for interactive applets used in Rice Universit
    - `threeDimensions.js` contains functions that are used across 3D plotting scripts.
    - `twoDimensions.js` contains functions that are used across 2D plotting scripts.
 
-## Setup/Running Instructions
+## Setup and Running Instructions
 
 **Clone the repository:**
    
@@ -41,7 +41,7 @@ This repository contains the code for interactive applets used in Rice Universit
    cd grb-grant-applet-project
    ```
 
-### To "run" the code:
+**To "run" the code:**
 Open the desired HTML file using a browser of your choosing.
 
 
