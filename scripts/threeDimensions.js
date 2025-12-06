@@ -192,7 +192,7 @@ function calcError3D(data, predictY) {
     // Calculate the error (predictY is the regression function)
     let error = 0;
     for (let i = 0; i < data.length; i++) {
-        error += Math.abs(data[i].y_pred - predictY(data[i].x1, data[i].x2));
+        error += Math.abs(data[i].y - predictY(data[i].x1, data[i].x2));
     }
     error = error / data.length;
     return error;
